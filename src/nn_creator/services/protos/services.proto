@@ -1,0 +1,144 @@
+// python -m grpc_tools.protoc -I src/tai_resources/protos --python_out=src/solver/master/services/from_protos --grpc_python_out=src/solver/master/services/from_protos src/tai_resources/protos/services.proto
+syntax = "proto3";
+package Services;
+
+
+message RowOfDataFrame {
+  repeated double values = 1;
+}
+
+enum CheckerType {
+  default = 0;
+  speedlines = 1;
+}
+
+message training_args {
+  message AutoML {
+  int32 additional_epochs = 2;
+  int32 max_aml_trials = 3;
+  int32 max_attempts = 4;
+  }
+
+  message Uncertainty {
+    CheckerType checker = 2;
+    int32 n_models = 3;
+  }
+
+  message Ensemble {
+    repeated ListOfStrings target_groups = 2;
+  }
+
+  AutoML aml_args = 1; // optional
+  Uncertainty unc_args = 2; // optional
+  Ensemble ensemble_args = 10; // optional
+  int32 n_epochs = 5;
+  repeated double split_sizes = 8; // optional
+  repeated string callbacks_cfgs_json = 11; // optional
+  string spec_args_json = 12;
+}
+
+message training_request {
+  string model_cfg_json = 1; // optional
+  string dataset_id = 8;
+  ModelType model_type = 3;
+  training_args args = 4;
+  string path2save = 12;
+}
+
+
+enum ModelType {
+  FNN1D = 0;
+  AE1D = 1;
+}
+
+enum Task {
+  geometry = 0;
+  performance = 1;
+}
+
+message prepare_data_request {
+  string get_dataset_id = 1;
+  string add_dataset_id = 3;
+  repeated PreparationArgs args = 2;
+
+}
+
+message PreparationArgs {
+  PreparerType type = 1;
+  string args_json = 2;
+}
+
+message prediction_start_request {
+  repeated string model_ids = 1;
+//  ConnectionString connection = 10;
+}
+
+message Progress {
+  float percent = 1;
+  string task = 2;
+}
+
+message DoneMessage {
+  bool is_done = 1;
+  string message = 2;
+  string network_address = 3; // optional
+}
+
+message ListOfStrings {
+  repeated string values = 1;
+}
+
+enum PreparerType {
+  delta = 0;
+  bezier_curve = 1;
+  formulas = 2;
+}
+
+enum MLtype {
+  continuous = 0;
+  categorical = 1;
+  discrete = 2;
+  undefined = 3;
+}
+
+message progress_request {}
+message stop_request {}
+
+
+
+service NNWorker { // will be renamed by NNWorker
+  rpc start_prediction(prediction_start_request) returns (DoneMessage);
+  rpc predict(stream RowOfDataFrame) returns (stream RowOfDataFrame){
+    // request meta:
+    // ("headers", string)
+    // ("args", string)
+
+    // response meta:
+    // ("headers", string)
+    // ("uncertainty_eval", string) optional
+  };
+  rpc start_training(training_request) returns (DoneMessage);
+  rpc prepare_data(prepare_data_request) returns (DoneMessage);
+  rpc stop(stop_request) returns (DoneMessage);
+  rpc get_progress(progress_request) returns (Progress);
+}
+
+service DataBase {
+//  rpc add_model(add_model_request) returns (DoneMessage);
+//  rpc get_models(get_model_request) returns ();
+//  rpc get_models_descriptors(get_model_request) returns ();
+
+  rpc get_dataset(get_data_request) returns (stream RowOfDataFrame) {
+    // response meta:
+    // ("headers", repeated string)
+  };
+  rpc get_dataset_descriptor(get_data_request) returns (DatasetDescriptor);
+  rpc add_dataset(stream RowOfDataFrame) returns (DoneMessage) {
+    // request meta:
+    // ("headers", repeated string)
+    // ("dataset_id", string)
+  };
+  rpc add_dataset_descriptor(DatasetDescriptor) returns (DoneMessage){
+    // request meta:
+    // ("dataset_id", string)
+  };

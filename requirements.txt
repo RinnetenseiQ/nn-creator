@@ -1,0 +1,11 @@
+pandas~=1.5.3
+numpy~=1.24.2
+tensorflow~=2.10.0
+scikit-learn~=1.2.2
+matplotlib~=3.7.1
+scipy~=1.10.1
+tqdm~=4.65.0
+autokeras~=1.1.0
+joblib~=1.2.0
+pyqt5~=5.15.9
+sublime~=0.1.0

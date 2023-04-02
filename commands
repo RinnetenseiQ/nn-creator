@@ -1,0 +1,9 @@
+
+
+Converting pyqt .ui forms to .py:
+Template:
+pyuic5 -x file.ui -o file_parent.py
+pyuic5 -x src/nn_creator/forms/ui/StartWindow.ui -o  src/nn_creator/forms/from_ui/StartWindow_parent.py
+pyuic5 -x src/nn_creator/forms/ui/CreateProjectWindow.ui -o  src/nn_creator/forms/from_ui/CreateProjectWindow_parent.py
+pyuic5 -x src/nn_creator/forms/ui/CreateProjectDialog.ui -o  src/nn_creator/forms/from_ui/CreateProjectDialog_parent.py
+pyuic5 -x src/nn_creator/forms/ui/ProjectWindow.ui -o  src/nn_creator/forms/from_ui/ProjectWindow_parent.py

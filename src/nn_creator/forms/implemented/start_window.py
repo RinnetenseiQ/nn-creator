@@ -29,14 +29,13 @@ class NNCreatorStartWindow(QtWidgets.QMainWindow, Ui_NNCreatorStartWindow):
 
     def _open_project_btn_Clicked(self):
         path = QFileDialog.getExistingDirectory(parent=self,
-                                                   caption="Open project",
-                                                   # directory=self.settings.value("projectPath", "C:/",type=str)
-                                                   )
+                                                caption="Open project",
+                                                # directory=self.settings.value("projectPath", "C:/",type=str)
+                                                )
         project_window = ProjectEditorWindow(path=path)
         self.project_windows.append(project_window)
         project_window.show()
         self.hide()
-
 
 
 if __name__ == '__main__':

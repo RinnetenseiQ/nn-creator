@@ -24,7 +24,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>1</number>
     </property>
     <widget class="QWidget" name="tab">
      <attribute name="title">
@@ -43,7 +43,7 @@
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="3,14">
          <item>
-          <widget class="QListView" name="dataset_list_LV"/>
+          <widget class="QListWidget" name="dataset_list_LW"/>
          </item>
          <item>
           <layout class="QVBoxLayout" name="verticalLayout" stretch="1,8">
@@ -57,7 +57,7 @@
               </widget>
              </item>
              <item>
-              <widget class="QComboBox" name="dataset_type_btn"/>
+              <widget class="QComboBox" name="dataset_type_CB"/>
              </item>
              <item>
               <widget class="QLineEdit" name="dataset_path_LE"/>
@@ -86,6 +86,16 @@
              <property name="frameShadow">
               <enum>QFrame::Raised</enum>
              </property>
+             <widget class="QTableView" name="dataframe_TV">
+              <property name="geometry">
+               <rect>
+                <x>10</x>
+                <y>0</y>
+                <width>1151</width>
+                <height>281</height>
+               </rect>
+              </property>
+             </widget>
             </widget>
            </item>
           </layout>
@@ -95,7 +105,7 @@
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="3,7,7">
          <item>
-          <widget class="QListView" name="ds_shape_blocks"/>
+          <widget class="QListWidget" name="ds_shape_blocks_LW"/>
          </item>
          <item>
           <widget class="QFrame" name="frame_2">
@@ -161,9 +171,39 @@
         <height>691</height>
        </rect>
       </property>
-      <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="3,10,3">
+      <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="3,10,0">
        <item>
-        <widget class="QListView" name="model_blocks_LV"/>
+        <widget class="QTreeWidget" name="model_blocks_TW">
+         <attribute name="headerCascadingSectionResizes">
+          <bool>false</bool>
+         </attribute>
+         <column>
+          <property name="text">
+           <string>Trainable</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Reshaping</string>
+          </property>
+         </column>
+         <item>
+          <property name="text">
+           <string>Dense</string>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>LSTM</string>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+         </item>
+        </widget>
        </item>
        <item>
         <widget class="QFrame" name="frame_4">
@@ -173,36 +213,65 @@
          <property name="frameShadow">
           <enum>QFrame::Raised</enum>
          </property>
-         <widget class="QPushButton" name="pushButton_3">
+         <widget class="QScrollArea" name="scrollArea">
           <property name="geometry">
            <rect>
-            <x>370</x>
-            <y>640</y>
-            <width>93</width>
-            <height>28</height>
+            <x>0</x>
+            <y>0</y>
+            <width>901</width>
+            <height>691</height>
            </rect>
           </property>
-          <property name="text">
-           <string>output</string>
+          <property name="widgetResizable">
+           <bool>true</bool>
           </property>
-         </widget>
-         <widget class="QPushButton" name="pushButton_2">
-          <property name="geometry">
-           <rect>
-            <x>380</x>
-            <y>20</y>
-            <width>93</width>
-            <height>28</height>
-           </rect>
-          </property>
-          <property name="text">
-           <string>input</string>
-          </property>
+          <widget class="QWidget" name="scrollAreaWidgetContents">
+           <property name="geometry">
+            <rect>
+             <x>0</x>
+             <y>0</y>
+             <width>897</width>
+             <height>687</height>
+            </rect>
+           </property>
+           <widget class="QPushButton" name="pushButton_2">
+            <property name="geometry">
+             <rect>
+              <x>380</x>
+              <y>30</y>
+              <width>93</width>
+              <height>28</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string>input</string>
+            </property>
+           </widget>
+           <widget class="QPushButton" name="pushButton_3">
+            <property name="geometry">
+             <rect>
+              <x>380</x>
+              <y>620</y>
+              <width>93</width>
+              <height>28</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string>output</string>
+            </property>
+           </widget>
+          </widget>
          </widget>
         </widget>
        </item>
        <item>
-        <widget class="QListView" name="model_properties_LV"/>
+        <widget class="QTreeWidget" name="model_properties_TW">
+         <column>
+          <property name="text">
+           <string notr="true">1</string>
+          </property>
+         </column>
+        </widget>
        </item>
       </layout>
      </widget>

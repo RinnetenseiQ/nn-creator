@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1498</width>
-    <height>814</height>
+    <width>1572</width>
+    <height>799</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -24,7 +24,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="tab">
      <attribute name="title">
@@ -94,6 +94,22 @@
                 <width>1151</width>
                 <height>281</height>
                </rect>
+              </property>
+             </widget>
+             <widget class="QScrollBar" name="table_scroll_VSB">
+              <property name="geometry">
+               <rect>
+                <x>1160</x>
+                <y>0</y>
+                <width>16</width>
+                <height>281</height>
+               </rect>
+              </property>
+              <property name="maximum">
+               <number>100</number>
+              </property>
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
               </property>
              </widget>
             </widget>
@@ -230,8 +246,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>897</width>
-             <height>687</height>
+             <width>899</width>
+             <height>689</height>
             </rect>
            </property>
            <widget class="QPushButton" name="pushButton_2">
@@ -293,8 +309,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1498</width>
-     <height>25</height>
+     <width>1572</width>
+     <height>26</height>
     </rect>
    </property>
   </widget>

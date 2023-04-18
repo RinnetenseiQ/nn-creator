@@ -7,3 +7,15 @@ pyuic5 -x src/nn_creator/forms/ui/StartWindow.ui -o  src/nn_creator/forms/from_u
 pyuic5 -x src/nn_creator/forms/ui/CreateProjectWindow.ui -o  src/nn_creator/forms/from_ui/CreateProjectWindow_parent.py
 pyuic5 -x src/nn_creator/forms/ui/CreateProjectDialog.ui -o  src/nn_creator/forms/from_ui/CreateProjectDialog_parent.py
 pyuic5 -x src/nn_creator/forms/ui/ProjectWindow.ui -o  src/nn_creator/forms/from_ui/ProjectWindow_parent.py
+
+-install project as library (editable mode)
+pip install -e .
+
+-create environment
+conda create -n [env name] python=[version]
+conda create -n nn-creator2 python=3.9
+
+-pycharm terminal crashed issue solution
+open powershell as administrator and run command:
+    Set-ExecutionPolicy Unrestricted
+change into pycharm terminal from powershell to command prompt.

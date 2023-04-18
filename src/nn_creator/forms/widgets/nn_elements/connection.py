@@ -2,7 +2,7 @@ from PyQt5.QtGui import QPaintEvent
 from PyQt5.QtWidgets import QWidget
 
 
-class DenseLayerWidget(QWidget):
+class ConnectionWidget(QWidget):
     def __init__(self):
         super().__init__()
 

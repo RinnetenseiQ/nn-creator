@@ -1,0 +1,95 @@
+Need to find abstract representation as icon of the follow entities:
+
+#############################################################
+icons/Theme_name/layers:
+
+most of entities from docs www.tensorflow.org/api_docs/python/tf/keras/layers :
+
+- Activation
+- Add
+- Average
+- AveragePooling
+- BatchNormalization
+- Bidirectional
+- CategoryEncoding
+- Concatenate
+- Conv
+- ConvTranspose
+- ConvLSTM
+- Cropping
+- Dense
+- DepthwiseConv
+- Dot
+- Dropout
+- Embedding
+- Flatten
+- GRU
+- GroupNormalization
+- InputLayer
+- LSTM
+- Lambda
+- MaxPool
+- Maximum
+- Minimum
+- Multiply
+- Normalization
+- Permute
+- RNN
+- RepeatVector
+- Rescaling
+- Reshape
+- Resizing
+- Subtract
+- TextVectorization
+- TimeDistributed
+- UpSampling
+- ZeroPadding
+
+############################################################
+icons/Theme_name/ak_items:
+
+docs: 
+https://autokeras.com/block/
+
+- ConvBlock
+- DenseBlock
+- Embedding
+- Merge
+- RNNBlock
+- SpatialReduction
+- TemporalReduction
+- XceptionBlock
+- ImageBlock
+- StructuredDataBlock
+- TextBlock
+- ImageAugmentation
+- Normalization
+- TextToIntSequence
+- TextToNgramVector
+- CategoricalToNumerical
+- ClassificationHead
+- RegressionHead
+
+
+docs: 
+https://autokeras.com/node/
+
+- ImageInput
+- Input
+- StructuredDataInput
+- TextInput
+
+docs: 
+https://autokeras.com/base/
+
+- Node
+- Block
+- Head
+
+############################################################
+
+icons/Theme_name/preparers:
+
+- Delta
+- RangeTransformer
+- Formulas

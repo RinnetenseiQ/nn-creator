@@ -18,11 +18,7 @@ class AddWidget(QWidget):
         self.setFixedSize(*self.WIDGET_SIZE)
         self.setAcceptDrops(True)
         # self.setDragEnabled(True)
-        self.pixmap = QPixmap("data/resources/icons/Example_Theme/layers/add/icons8-добавить-50.png").scaled(
-            *self.WIDGET_SIZE)
-        self.non_empty_pixmap = QPixmap("data/resources/icons/Example_Theme/layers/add/icons8-добавить-50.png").scaled(
-            *self.WIDGET_SIZE)
-        self.empty_pixmap = QPixmap("data/resources/icons/Empty.png").scaled(*self.WIDGET_SIZE)
+        self.pixmap = QPixmap("data/resources/icons/Example_Theme/layers/add/icons8-добавить-50.png").scaled(*self.WIDGET_SIZE)
         if position:
             self.move(position)
         self.drag_start_position = self.pos()
@@ -33,10 +29,6 @@ class AddWidget(QWidget):
         painter = QPainter(self)
         painter.drawPixmap(self.rect(), self.pixmap)
         painter.end()
-
-    def set_pixmap(self, is_empty=False):
-        self.pixmap = self.empty_pixmap if is_empty else self.non_empty_pixmap
-        self.update()
 
     def set_opacity(self, opacity):
         self.setWindowOpacity(opacity)
@@ -52,15 +44,12 @@ class AddWidget(QWidget):
         print("mouse move")
         self.sender_signal.emit(self.widget_id)
         if event.buttons() == Qt.LeftButton:
-            # pixmap = self.grab()
-            pixmap = self.non_empty_pixmap
-            self.set_pixmap(is_empty=True)
+            self.hide()
             self.update()
             mime_data = QtCore.QMimeData()
             drag = QtGui.QDrag(self)
             drag.setMimeData(mime_data)
-            drag.setPixmap(self.non_empty_pixmap)
-            drag.setPixmap(pixmap)
+            drag.setPixmap(self.pixmap)
             drag.setHotSpot(event.pos() - self.rect().topLeft())
             drag.exec_(Qt.CopyAction | Qt.MoveAction)
 
@@ -117,7 +106,8 @@ class TestFrame(QFrame):
         new_point = QtCore.QPoint(position.x() - widget.drag_start_position.x(),
                                   position.y() - widget.drag_start_position.y())
         widget.move(new_point)
-        widget.set_pixmap(is_empty=False)
+        widget.show()
+        # widget.set_pixmap(is_empty=False)
         widget.update()
 
         self.moved_widget_id = None

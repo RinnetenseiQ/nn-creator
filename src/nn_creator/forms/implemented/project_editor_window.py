@@ -36,7 +36,6 @@ class ProjectEditorWindow(QMainWindow, Ui_ProjectEditorWindow):
         self.scrollArea = a
         widget.create_widget_signal.connect(a.update_widgets_holder)
 
-
         print("")
 
     def _connect_all(self):

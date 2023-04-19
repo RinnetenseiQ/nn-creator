@@ -14,12 +14,15 @@ class AddWidget(QWidget):
     def __init__(self, parent=None, widget_id=None, position=None):
         super().__init__(parent=parent)
         self.widget_id = widget_id
-        self.setFixedSize(30, 30)
+        self.WIDGET_SIZE = (30, 30)
+        self.setFixedSize(*self.WIDGET_SIZE)
         self.setAcceptDrops(True)
         # self.setDragEnabled(True)
-        self.pixmap = QPixmap("data/resources/icons/Example_Theme/layers/add/icons8-добавить-50.png")
-        self.non_empty_pixmap = QPixmap("data/resources/icons/Example_Theme/layers/add/icons8-добавить-50.png")
-        self.empty_pixmap = QPixmap("data/resources/icons/Empty.png")
+        self.pixmap = QPixmap("data/resources/icons/Example_Theme/layers/add/icons8-добавить-50.png").scaled(
+            *self.WIDGET_SIZE)
+        self.non_empty_pixmap = QPixmap("data/resources/icons/Example_Theme/layers/add/icons8-добавить-50.png").scaled(
+            *self.WIDGET_SIZE)
+        self.empty_pixmap = QPixmap("data/resources/icons/Empty.png").scaled(*self.WIDGET_SIZE)
         if position:
             self.move(position)
         self.drag_start_position = self.pos()
@@ -49,7 +52,8 @@ class AddWidget(QWidget):
         print("mouse move")
         self.sender_signal.emit(self.widget_id)
         if event.buttons() == Qt.LeftButton:
-            pixmap = self.grab()
+            # pixmap = self.grab()
+            pixmap = self.non_empty_pixmap
             self.set_pixmap(is_empty=True)
             self.update()
             mime_data = QtCore.QMimeData()
@@ -60,6 +64,17 @@ class AddWidget(QWidget):
             drag.setHotSpot(event.pos() - self.rect().topLeft())
             drag.exec_(Qt.CopyAction | Qt.MoveAction)
 
+    def mouseReleaseEvent(self, a0: QtGui.QMouseEvent) -> None:
+        pass
+
+    def leaveEvent(self, a0: QtCore.QEvent) -> None:
+        print("leave event")
+
+    def dragLeaveEvent(self, a0: QtGui.QDragLeaveEvent) -> None:
+        print("drag leave event")
+
+    # def dropEvent(self, a0: QtGui.QDropEvent) -> None:
+    #     print("add widget drop event")
 
     def minimumSizeHint(self) -> QtCore.QSize:
         return QSize(30, 30)
@@ -111,7 +126,6 @@ class TestFrame(QFrame):
 
     def set_moved_widget_id(self, widget_id):
         self.moved_widget_id = widget_id
-
 
 
 if __name__ == '__main__':

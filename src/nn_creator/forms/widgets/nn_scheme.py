@@ -6,59 +6,19 @@ from PyQt5.QtWidgets import QWidget, QApplication, QMainWindow, QGridLayout, QLa
 from PyQt5 import QtCore, QtGui
 import PyQt5
 from PyQt5.QtCore import Qt
-
-
-class Button(QPushButton):
-
-    def __init__(self, title, parent):
-        super().__init__(title, parent)
-
-    def mousePressEvent(self, event):
-        print("mouse press")
-        if event.button() == Qt.LeftButton:
-            # Запоминаем позицию относительно виджета
-            self.drag_start_position = event.pos()
-
-    def mouseMoveEvent(self, event):
-        print("mouse move")
-        if event.buttons() == Qt.LeftButton:
-            mime_data = QtCore.QMimeData()
-            drag = QtGui.QDrag(self)
-            drag.setMimeData(mime_data)
-            drag.setPixmap(self.grab())
-            drag.setHotSpot(event.pos() - self.rect().topLeft())
-            drag.exec_(Qt.CopyAction | Qt.MoveAction)
-
-
-    # def mouseMoveEvent(self, e):
-    #
-    #     if e.buttons() != Qt.RightButton:
-    #         return
-    #
-    #     mimeData = QMimeData()
-    #
-    #     drag = QDrag(self)
-    #     drag.setMimeData(mimeData)
-    #     drag.setHotSpot(e.pos() - self.rect().topLeft())
-    #
-    #     dropAction = drag.exec_(Qt.MoveAction)
-    #
-    #
-    # def mousePressEvent(self, e):
-    #
-    #     QPushButton.mousePressEvent(self, e)
-    #
-    #     if e.button() == Qt.LeftButton:
-    #         print('press')
+from PyQt5.QtCore import QThread, pyqtSignal
 
 
 class NNSchemeWidget(QFrame):
+
+
     def __init__(self):
         super().__init__()
         self.setFixedSize(300, 300)
         self.setAcceptDrops(True)
-        self.button = Button(parent=self, title="Label")
         self.setStyleSheet("background-color:yellow;")
+
+        self.widgets = []
         self.update()
         # self.setDragEnabled(True)
         # self.update()
@@ -68,7 +28,8 @@ class NNSchemeWidget(QFrame):
 
     def dropEvent(self, e):
         position = e.pos()
-        self.button.move(position)
+        new_point = QtCore.QPoint(position.x() - self.widget.drag_start_position.x(),
+                                  position.y() - self.widget.drag_start_position.y())
 
         e.setDropAction(Qt.MoveAction)
         e.accept()

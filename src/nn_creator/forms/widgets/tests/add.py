@@ -1,6 +1,6 @@
 import sys
 
-from PyQt5.QtCore import QSize, pyqtSignal, QObject, QEvent
+from PyQt5.QtCore import *
 from PyQt5.QtGui import QPaintEvent, QPainter, QPixmap
 from PyQt5.QtWidgets import QWidget, QApplication, QMainWindow, QGridLayout, QLabel, QFrame
 from PyQt5 import QtCore, QtGui
@@ -9,7 +9,7 @@ from PyQt5.QtCore import Qt
 
 
 class AddWidget(QWidget):
-    cast_id_signal = pyqtSignal(int)
+    sender_signal = pyqtSignal(int)
 
     def __init__(self, parent=None, widget_id=None, position=None):
         super().__init__(parent=parent)
@@ -18,7 +18,11 @@ class AddWidget(QWidget):
         self.setFixedSize(*self.WIDGET_SIZE)
         self.setAcceptDrops(True)
         # self.setDragEnabled(True)
-        self.pixmap = QPixmap("data/resources/icons/Example_Theme/layers/add/icons8-добавить-50.png").scaled(*self.WIDGET_SIZE)
+        self.pixmap = QPixmap("data/resources/icons/Example_Theme/layers/add/icons8-добавить-50.png").scaled(
+            *self.WIDGET_SIZE)
+        self.non_empty_pixmap = QPixmap("data/resources/icons/Example_Theme/layers/add/icons8-добавить-50.png").scaled(
+            *self.WIDGET_SIZE)
+        self.empty_pixmap = QPixmap("data/resources/icons/Empty.png").scaled(*self.WIDGET_SIZE)
         if position:
             self.move(position)
         self.drag_start_position = self.pos()
@@ -30,6 +34,14 @@ class AddWidget(QWidget):
         painter.drawPixmap(self.rect(), self.pixmap)
         painter.end()
 
+    def set_pixmap(self, is_empty=False):
+        self.pixmap = self.empty_pixmap if is_empty else self.non_empty_pixmap
+        self.update()
+
+    def set_opacity(self, opacity):
+        self.setWindowOpacity(opacity)
+        self.update()
+
     def mousePressEvent(self, event):
         print("mouse press")
         if event.button() == Qt.LeftButton:
@@ -38,15 +50,17 @@ class AddWidget(QWidget):
 
     def mouseMoveEvent(self, event):
         print("mouse move")
-
+        self.sender_signal.emit(self.widget_id)
         if event.buttons() == Qt.LeftButton:
-            self.cast_id_signal.emit(self.widget_id)
-            self.hide()
+            # pixmap = self.grab()
+            pixmap = self.non_empty_pixmap
+            self.set_pixmap(is_empty=True)
             self.update()
             mime_data = QtCore.QMimeData()
             drag = QtGui.QDrag(self)
             drag.setMimeData(mime_data)
-            drag.setPixmap(self.pixmap)
+            drag.setPixmap(self.non_empty_pixmap)
+            drag.setPixmap(pixmap)
             drag.setHotSpot(event.pos() - self.rect().topLeft())
             drag.exec_(Qt.CopyAction | Qt.MoveAction)
 
@@ -79,7 +93,7 @@ class TestFrame(QFrame):
                         1: AddWidget(parent=self, widget_id=1, position=QtCore.QPoint(50, 50))}
 
         for widget in self.widgets.values():
-            widget.cast_id_signal.connect(self.set_moved_widget_id)
+            widget.sender_signal.connect(self.set_moved_widget_id)
 
         self.moved_widget_id = None
         self.setStyleSheet("background-color:yellow;")
@@ -96,11 +110,14 @@ class TestFrame(QFrame):
         print("drop")
         position = e.pos()
 
+        # self.widget.move(new_point)
+        # self.widget.set_pixmap(is_empty=False)
+        # self.widget.update()
         widget = self.widgets[self.moved_widget_id]
         new_point = QtCore.QPoint(position.x() - widget.drag_start_position.x(),
                                   position.y() - widget.drag_start_position.y())
         widget.move(new_point)
-        widget.show()
+        widget.set_pixmap(is_empty=False)
         widget.update()
 
         self.moved_widget_id = None
@@ -114,13 +131,16 @@ class TestFrame(QFrame):
 class EventFilter(QObject):
     def init(self, wigets):
         self.wigets = wigets
+        self.non_empty_pixmap = QPixmap("data/resources/icons/Example_Theme/layers/add/icons8-добавить-50.png").scaled(30, 30)
 
     def eventFilter(self, obj, event):
         # print("Event Filter: sum event happend")
         if event.type() == QEvent.MouseButtonRelease:
-            for widget in self.wigets.values():
-                widget.show()
-                widget.update()
+            self.wigets[0].pixmap = self.non_empty_pixmap
+            self.wigets[1].pixmap = self.non_empty_pixmap
+
+            self.wigets[0].update()
+            self.wigets[1].update()
 
             print("Event Filter: Mouse Button Release")
 

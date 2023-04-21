@@ -36,7 +36,7 @@ class NNSchemeWidget(QFrame):
 
     def dragEnterEvent(self, e):
         print(f"drag id: {self.moved_widget_id}")
-        self.updateCursorPosition()
+        # self.updateCursorPosition()
         # self.drag_widget = self.sender()
         e.accept()
 

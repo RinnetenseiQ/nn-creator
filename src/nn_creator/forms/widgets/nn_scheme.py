@@ -20,9 +20,6 @@ class NNSchemeWidget(QFrame):
 
         self.widgets = {}
 
-        for widget in self.widgets.values():
-            widget.cast_id_signal.connect(self.set_moved_widget_id)
-
         self.moved_widget_id = None
         self.setStyleSheet("background-color:yellow;")
         self.update()

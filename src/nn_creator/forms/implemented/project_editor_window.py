@@ -30,10 +30,11 @@ class ProjectEditorWindow(QMainWindow, Ui_ProjectEditorWindow):
         trainable_group_item = self.model_blocks_TW.topLevelItem(0)
         non_trainable_group_item = self.model_blocks_TW.topLevelItem(1)
 
-        temp = QTreeWidgetItem(trainable_group_item)
+        temp = QTreeWidgetItem(non_trainable_group_item)
         non_trainable_group_item.addChild(temp)
         pixmap = QPixmap("data/resources/icons/Example_Theme/layers/add/icons8-добавить-50.png")
         widget = IconLabel(icon_pixmap=pixmap, drag_pixmap=pixmap.scaled(30, 30), text="add")
+        # widget.addToolTip("add")
         self.model_blocks_TW.setItemWidget(temp, 0, widget)
 
         a = NNSchemeWidget(parent=self.scrollArea.parent())

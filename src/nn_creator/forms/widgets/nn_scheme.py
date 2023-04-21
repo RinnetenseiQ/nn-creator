@@ -20,9 +20,9 @@ class NNSchemeWidget(QFrame):
 
         self.widgets = {}
 
-        for widget in self.widgets.values():
-            widget.cast_id_signal.connect(self.set_moved_widget_id)
-            widget.delete_widget_signal.connect(self.delete_widget_id)
+        # for widget in self.widgets.values():
+        #     widget.cast_id_signal.connect(self.set_moved_widget_id)
+        #     widget.delete_widget_signal.connect(self.delete_widget_id)
 
         self.moved_widget_id = None
         self.setStyleSheet("background-color:yellow;")
@@ -56,11 +56,12 @@ class NNSchemeWidget(QFrame):
         print("set_moved_widget_id", widget_id)
         self.moved_widget_id = widget_id
 
-    def update_widgets_holder(self, widget):
+    def update_widgets_holder(self, widget: AddWidget):
         key = np.max(list(self.widgets.keys())) + 1 if self.widgets else 0
         widget.widget_id = key
         widget.setParent(self)
         widget.cast_id_signal.connect(self.set_moved_widget_id)
+        widget.delete_widget_signal.connect(self.delete_widget_id)
         self.widgets[key] = widget
         self.set_moved_widget_id(key)
         # self.moved_widget_id = key

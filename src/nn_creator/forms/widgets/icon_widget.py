@@ -42,7 +42,6 @@ class IconLabel(QWidget):
             widget = AddWidget(parent=self.window())
             widget.hide()
             self.create_widget_signal.emit(widget)
-
             mime_data = QtCore.QMimeData()
             drag = QtGui.QDrag(self)
             drag.setMimeData(mime_data)

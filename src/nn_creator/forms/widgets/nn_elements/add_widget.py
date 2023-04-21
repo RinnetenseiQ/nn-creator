@@ -2,13 +2,14 @@ import sys
 
 from PyQt5.QtCore import QSize, pyqtSignal, QObject, QEvent
 from PyQt5.QtGui import QPaintEvent, QPainter, QPixmap
-from PyQt5.QtWidgets import QWidget, QApplication, QMainWindow, QGridLayout, QLabel, QFrame
+from PyQt5.QtWidgets import QWidget, QApplication, QMainWindow, QGridLayout, QLabel, QFrame, QMenu
 from PyQt5 import QtCore, QtGui
 import PyQt5
 from PyQt5.QtCore import Qt
 
 
 class AddWidget(QWidget):
+    delete_widget_signal = pyqtSignal(int)
     cast_id_signal = pyqtSignal(int)
 
     def __init__(self, parent=None, widget_id=None, position=None):
@@ -37,7 +38,7 @@ class AddWidget(QWidget):
             self.drag_start_position = event.pos()
 
     def mouseMoveEvent(self, event):
-        print("mouse move")
+        print("mouse move-")
 
         if event.buttons() == Qt.LeftButton:
             self.cast_id_signal.emit(self.widget_id)
@@ -54,7 +55,7 @@ class AddWidget(QWidget):
         pass
 
     def leaveEvent(self, a0: QtCore.QEvent) -> None:
-        print("leave event")
+        print("leave event-")
 
     def dragLeaveEvent(self, a0: QtGui.QDragLeaveEvent) -> None:
         print("drag leave event")
@@ -67,6 +68,16 @@ class AddWidget(QWidget):
 
     def sizeHint(self) -> QtCore.QSize:
         return self.minimumSizeHint()
+
+    def contextMenuEvent(self, event):
+        contextMenu = QMenu(self)
+        contextMenu.setStyleSheet("background-color:blue;")
+        deleteAct = contextMenu.addAction("Delete")
+        action = contextMenu.exec_(self.mapToGlobal(event.pos()))
+        if action == deleteAct:
+            self.delete_widget_signal.emit(self.widget_id)
+            self.close()
+
 
 
 class TestFrame(QFrame):

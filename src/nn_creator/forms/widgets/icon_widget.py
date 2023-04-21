@@ -36,7 +36,7 @@ class IconLabel(QWidget):
             layout.addStretch()
 
     def mouseMoveEvent(self, event):
-        print("mouse move")
+        print("mouse move-----")
         # self.sender_signal.emit(self.widget_id)
         if event.buttons() == Qt.LeftButton:
             widget = AddWidget(parent=self.window())
@@ -61,6 +61,7 @@ class TestFrame(QFrame):
 
         for widget in self.widgets.values():
             widget.cast_id_signal.connect(self.set_moved_widget_id)
+
 
         self.moved_widget_id = None
         self.setStyleSheet("background-color:yellow;")
@@ -120,6 +121,7 @@ if __name__ == '__main__':
 
     frame = TestFrame(parent=window2)
     icon_label.create_widget_signal.connect(frame.update_widgets_holder)
+
     frame.move(0, 300)
     window2.layout().addWidget(frame)
 

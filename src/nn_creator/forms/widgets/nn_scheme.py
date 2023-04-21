@@ -9,7 +9,7 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtCore import QThread, pyqtSignal
 import numpy as np
 
-
+from nn_creator.forms.widgets.nn_elements.add_widget import AddWidget
 
 
 class NNSchemeWidget(QFrame):
@@ -22,6 +22,7 @@ class NNSchemeWidget(QFrame):
 
         for widget in self.widgets.values():
             widget.cast_id_signal.connect(self.set_moved_widget_id)
+            widget.delete_widget_signal.connect(self.delete_widget_id)
 
         self.moved_widget_id = None
         self.setStyleSheet("background-color:yellow;")
@@ -30,26 +31,29 @@ class NNSchemeWidget(QFrame):
         # self.update()
 
     def dragEnterEvent(self, e):
-        print("drag")
+        print(f"drag id: {self.moved_widget_id}")
         # self.drag_widget = self.sender()
         e.accept()
 
     def dropEvent(self, e):
-        print("drop")
         position = e.pos()
 
-        widget = self.widgets[self.moved_widget_id]
+        widget: AddWidget = self.widgets[self.moved_widget_id]
         new_point = QtCore.QPoint(position.x() - widget.drag_start_position.x(),
                                   position.y() - widget.drag_start_position.y())
         widget.move(new_point)
         widget.show()
         widget.update()
 
+        print(f"drop id: {self.moved_widget_id}")
         self.moved_widget_id = None
         e.setDropAction(Qt.MoveAction)
         e.accept()
 
+
+
     def set_moved_widget_id(self, widget_id):
+        print("set_moved_widget_id", widget_id)
         self.moved_widget_id = widget_id
 
     def update_widgets_holder(self, widget):
@@ -60,7 +64,11 @@ class NNSchemeWidget(QFrame):
         self.widgets[key] = widget
         self.set_moved_widget_id(key)
         # self.moved_widget_id = key
+        print(f"widgets_ids: {self.widgets.keys()}")
 
+    def delete_widget_id(self, widget_id):
+        print(f"delete: {widget_id}")
+        self.widgets.pop(widget_id)
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)

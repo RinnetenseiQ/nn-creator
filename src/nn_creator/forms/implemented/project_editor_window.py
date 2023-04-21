@@ -1,5 +1,5 @@
 from PyQt5 import QtWidgets
-from PyQt5.QtCore import QCoreApplication
+from PyQt5.QtCore import QCoreApplication, pyqtSignal
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QFileDialog, QMainWindow, QTreeWidgetItem, QApplication
 import sys
@@ -7,11 +7,15 @@ import pandas as pd
 
 from nn_creator.forms.from_ui.ProjectWindow_parent import Ui_ProjectEditorWindow
 from nn_creator.forms.widgets.icon_widget import IconLabel
+from nn_creator.forms.widgets.nn_elements.add_widget import EventFilter, AddWidget
 from nn_creator.forms.widgets.nn_scheme import NNSchemeWidget
 from nn_creator.forms.widgets.pandas_model import PandasModel
 
 
 class ProjectEditorWindow(QMainWindow, Ui_ProjectEditorWindow):
+
+    update_event_filter_signal = pyqtSignal(AddWidget)
+
     def __init__(self, path):
         super().__init__()
         self.path = path
@@ -35,7 +39,11 @@ class ProjectEditorWindow(QMainWindow, Ui_ProjectEditorWindow):
         a.setFixedSize(self.scrollArea.size())
         self.scrollArea = a
         widget.create_widget_signal.connect(a.update_widgets_holder)
-
+        # global event_filter
+        # event_filter = EventFilter()
+        # widget.create_widget_signal.connect(event_filter.update_widgets_list)
+        # app = QApplication.instance()
+        # app.installEventFilter(event_filter)
         print("")
 
     def _connect_all(self):

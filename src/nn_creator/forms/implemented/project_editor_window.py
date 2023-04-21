@@ -1,5 +1,5 @@
 from PyQt5 import QtWidgets
-from PyQt5.QtCore import QCoreApplication
+from PyQt5.QtCore import QCoreApplication, pyqtSignal
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QFileDialog, QMainWindow, QTreeWidgetItem, QApplication
 import sys
@@ -7,13 +7,18 @@ import pandas as pd
 
 from nn_creator.forms.from_ui.ProjectWindow_parent import Ui_ProjectEditorWindow
 from nn_creator.forms.widgets.icon_widget import IconLabel
+from nn_creator.forms.widgets.nn_elements.add_widget import EventFilter, AddWidget
 from nn_creator.forms.widgets.nn_scheme import NNSchemeWidget
 from nn_creator.forms.widgets.pandas_model import PandasModel
 
 
 class ProjectEditorWindow(QMainWindow, Ui_ProjectEditorWindow):
-    def __init__(self, path):
+
+    update_event_filter_signal = pyqtSignal(AddWidget)
+
+    def __init__(self, path, event_filter=None):
         super().__init__()
+        self.event_filter = event_filter
         self.path = path
         self.setupUi(self)
         self._init_widgets()
@@ -25,17 +30,19 @@ class ProjectEditorWindow(QMainWindow, Ui_ProjectEditorWindow):
         trainable_group_item = self.model_blocks_TW.topLevelItem(0)
         non_trainable_group_item = self.model_blocks_TW.topLevelItem(1)
 
-        temp = QTreeWidgetItem(trainable_group_item)
+        temp = QTreeWidgetItem(non_trainable_group_item)
         non_trainable_group_item.addChild(temp)
         pixmap = QPixmap("data/resources/icons/Example_Theme/layers/add/icons8-добавить-50.png")
         widget = IconLabel(icon_pixmap=pixmap, drag_pixmap=pixmap.scaled(30, 30), text="add")
+        # widget.addToolTip("add")
         self.model_blocks_TW.setItemWidget(temp, 0, widget)
 
         a = NNSchemeWidget(parent=self.scrollArea.parent())
         a.setFixedSize(self.scrollArea.size())
         self.scrollArea = a
         widget.create_widget_signal.connect(a.update_widgets_holder)
-
+        # global event_filter
+        widget.create_widget_signal.connect(self.event_filter.update_widgets_list)
         print("")
 
     def _connect_all(self):

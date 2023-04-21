@@ -16,8 +16,9 @@ class ProjectEditorWindow(QMainWindow, Ui_ProjectEditorWindow):
 
     update_event_filter_signal = pyqtSignal(AddWidget)
 
-    def __init__(self, path):
+    def __init__(self, path, event_filter=None):
         super().__init__()
+        self.event_filter = event_filter
         self.path = path
         self.setupUi(self)
         self._init_widgets()
@@ -40,10 +41,7 @@ class ProjectEditorWindow(QMainWindow, Ui_ProjectEditorWindow):
         self.scrollArea = a
         widget.create_widget_signal.connect(a.update_widgets_holder)
         # global event_filter
-        # event_filter = EventFilter()
-        # widget.create_widget_signal.connect(event_filter.update_widgets_list)
-        # app = QApplication.instance()
-        # app.installEventFilter(event_filter)
+        widget.create_widget_signal.connect(self.event_filter.update_widgets_list)
         print("")
 
     def _connect_all(self):

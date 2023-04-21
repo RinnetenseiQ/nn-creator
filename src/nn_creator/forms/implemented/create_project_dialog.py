@@ -8,8 +8,9 @@ from nn_creator.forms.implemented.project_editor_window import ProjectEditorWind
 
 
 class CreateProjectDialog(QtWidgets.QDialog, Ui_CreateProjectDialog):
-    def __init__(self, parent,  project_windows):
+    def __init__(self, parent,  project_windows, event_filter=None):
         super().__init__()
+        self.event_filter = event_filter
         self._parent = parent
         self.project_windows = project_windows
         self.setupUi(self)
@@ -43,7 +44,7 @@ class CreateProjectDialog(QtWidgets.QDialog, Ui_CreateProjectDialog):
     def _create_project_btn_clicked(self):
         project_path = self.project_path_LE.text()
         os.makedirs(project_path, exist_ok=True)
-        project_window = ProjectEditorWindow(project_path)
+        project_window = ProjectEditorWindow(project_path, event_filter=self.event_filter)
         self.project_windows.append(project_window)
         project_window.show()
         self._parent.hide()

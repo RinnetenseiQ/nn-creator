@@ -1,20 +1,31 @@
 import sys
 
 from PyQt5.QtCore import QSize, QMimeData
-from PyQt5.QtGui import QPaintEvent, QPainter, QPixmap, QDrag
+from PyQt5.QtGui import QPaintEvent, QPainter, QPixmap, QDrag, QMouseEvent
 from PyQt5.QtWidgets import QWidget, QApplication, QMainWindow, QGridLayout, QLabel, QFrame, QPushButton
 from PyQt5 import QtCore, QtGui
 import PyQt5
 from PyQt5.QtCore import Qt
-from PyQt5.QtCore import QThread, pyqtSignal
+from PyQt5.QtCore import QThread, pyqtSignal, QObject
 import numpy as np
 
-from nn_creator.forms.widgets.nn_elements.add_widget import AddWidget
+from nn_creator.forms.widgets.types import AddWidget
 
+
+class CursorPos(QObject):
+    def __init__(self, window):
+        super().__init__()
+        self.window = window
+    def run(self):
+        pos = self.window.mapFromGlobal(self.cursor().pos())
+        x = pos.x()
+        y = pos.y()
+        print(f"Cursor position: x={x}, y={y}")
 
 class NNSchemeWidget(QFrame):
     def __init__(self, parent=None):
         super().__init__(parent=parent)
+        self.parent = parent
         self.setFixedSize(300, 300)
         self.setAcceptDrops(True)
 
@@ -32,15 +43,22 @@ class NNSchemeWidget(QFrame):
 
     def dragEnterEvent(self, e):
         print(f"drag id: {self.moved_widget_id}")
+        self.updateCursorPosition()
         # self.drag_widget = self.sender()
         e.accept()
-
+    def updateCursorPosition(self):
+        pos = self.mapFromGlobal(self.cursor().pos())
+        x = pos.x()
+        y = pos.y()
+        print(f"Cursor position: x={x}, y={y}")
     def dropEvent(self, e):
         position = e.pos()
 
         widget: AddWidget = self.widgets[self.moved_widget_id]
         new_point = QtCore.QPoint(position.x() - widget.drag_start_position.x(),
                                   position.y() - widget.drag_start_position.y())
+        self.check_geometry(child_widget=new_point, nn_scheme=self, window=self.parent)
+
         widget.move(new_point)
         widget.show()
         widget.update()
@@ -50,6 +68,17 @@ class NNSchemeWidget(QFrame):
         e.setDropAction(Qt.MoveAction)
         e.accept()
 
+    def mouseMoveEvent(self, event: QMouseEvent):
+        x = event.x()
+        y = event.y()
+        print(f"Cursor position: x={x}, y={y}")
+    def check_geometry(self, child_widget, nn_scheme, window):
+        child_geometry = child_widget
+        nn_scheme_geometry = nn_scheme.geometry()
+        window_geometry = window.geometry()
+        print("widget: ", child_geometry, '\n', "scheme: ", nn_scheme_geometry, '\n', "window: ", window_geometry, '\n')
+        # if not parent_geometry.contains(child_geometry):
+        #     print("Child widget is outside parent widget bounds")
 
 
     def set_moved_widget_id(self, widget_id):

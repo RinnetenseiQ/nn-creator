@@ -1,7 +1,7 @@
 import sys
 
 from PyQt5.QtCore import *
-from PyQt5.QtGui import QPaintEvent, QPainter, QPixmap
+from PyQt5.QtGui import QPaintEvent, QPainter, QPixmap, QMouseEvent
 from PyQt5.QtWidgets import QWidget, QApplication, QMainWindow, QGridLayout, QLabel, QFrame
 from PyQt5 import QtCore, QtGui
 import PyQt5
@@ -13,6 +13,9 @@ class AddWidget(QWidget):
 
     def __init__(self, parent=None, widget_id=None, position=None):
         super().__init__(parent=parent)
+        self.timer = QTimer(self)
+        self.timer.timeout.connect(self.updateCursorPosition)
+        self.timer.start(50)  # запускаем таймер с интервалом 50 мс
         self.widget_id = widget_id
         self.WIDGET_SIZE = (30, 30)
         self.setFixedSize(*self.WIDGET_SIZE)
@@ -28,6 +31,12 @@ class AddWidget(QWidget):
         self.drag_start_position = self.pos()
         self.update()
 
+    def updateCursorPosition(self):
+        pos = self.mapFromGlobal(self.cursor().pos())
+        x = pos.x()
+        y = pos.y()
+        print(f"Cursor position: x={x}, y={y}")
+
     def paintEvent(self, event: QPaintEvent) -> None:
         print("paint")
         painter = QPainter(self)
@@ -42,6 +51,10 @@ class AddWidget(QWidget):
         self.setWindowOpacity(opacity)
         self.update()
 
+    # def mouseMoveEvent(self, event: QMouseEvent):
+    #     x = event.x()
+    #     y = event.y()
+    #     print(f"Cursor position: x={x}, y={y}")
     def mousePressEvent(self, event):
         print("mouse press")
         if event.button() == Qt.LeftButton:
@@ -124,6 +137,10 @@ class TestFrame(QFrame):
         e.setDropAction(Qt.MoveAction)
         e.accept()
 
+    def mouseMoveEvent(self, event: QMouseEvent):
+        x = event.x()
+        y = event.y()
+        print(f"Cursor position: x={x}, y={y}")
     def set_moved_widget_id(self, widget_id):
         self.moved_widget_id = widget_id
 
@@ -135,15 +152,23 @@ class EventFilter(QObject):
 
     def eventFilter(self, obj, event):
         # print("Event Filter: sum event happend")
-        if event.type() == QEvent.MouseButtonRelease:
+        # if event.type() == QEvent.MouseButtonRelease:
+        #
+        #     self.wigets[0].pixmap = self.non_empty_pixmap
+        #     self.wigets[1].pixmap = self.non_empty_pixmap
+        #
+        #     self.wigets[0].update()
+        #     self.wigets[1].update()
+        #
+        #     print("Event Filter: Mouse Button Release")
+
+        if event.type() == QEvent.Drop:
             self.wigets[0].pixmap = self.non_empty_pixmap
             self.wigets[1].pixmap = self.non_empty_pixmap
 
             self.wigets[0].update()
             self.wigets[1].update()
-
-            print("Event Filter: Mouse Button Release")
-
+            print("Event Filter: Drop")
         return super().eventFilter(obj, event)
 
 

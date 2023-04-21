@@ -52,7 +52,7 @@ class AddWidget(QWidget):
             drag.exec_(Qt.CopyAction | Qt.MoveAction)
 
     def mouseReleaseEvent(self, a0: QtGui.QMouseEvent) -> None:
-        pass
+        print('mouseReleaseEvent')
 
     def leaveEvent(self, a0: QtCore.QEvent) -> None:
         print("leave event-")

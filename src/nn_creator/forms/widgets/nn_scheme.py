@@ -9,7 +9,6 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtCore import QThread, pyqtSignal, QObject
 import numpy as np
 
-from nn_creator.forms.widgets.types import AddWidget
 
 
 class CursorPos(QObject):
@@ -25,15 +24,9 @@ class CursorPos(QObject):
 class NNSchemeWidget(QFrame):
     def __init__(self, parent=None):
         super().__init__(parent=parent)
-        self.parent = parent
         self.setFixedSize(300, 300)
         self.setAcceptDrops(True)
-
         self.widgets = {}
-
-        # for widget in self.widgets.values():
-        #     widget.cast_id_signal.connect(self.set_moved_widget_id)
-        #     widget.delete_widget_signal.connect(self.delete_widget_id)
 
         self.moved_widget_id = None
         self.setStyleSheet("background-color:yellow;")
@@ -43,21 +36,17 @@ class NNSchemeWidget(QFrame):
 
     def dragEnterEvent(self, e):
         print(f"drag id: {self.moved_widget_id}")
-        self.updateCursorPosition()
+        # self.updateCursorPosition()
         # self.drag_widget = self.sender()
         e.accept()
-    def updateCursorPosition(self):
-        pos = self.mapFromGlobal(self.cursor().pos())
-        x = pos.x()
-        y = pos.y()
-        print(f"Cursor position: x={x}, y={y}")
+
     def dropEvent(self, e):
         position = e.pos()
 
-        widget: AddWidget = self.widgets[self.moved_widget_id]
+        widget = self.widgets[self.moved_widget_id]
         new_point = QtCore.QPoint(position.x() - widget.drag_start_position.x(),
                                   position.y() - widget.drag_start_position.y())
-        self.check_geometry(child_widget=new_point, nn_scheme=self, window=self.parent)
+        self.check_geometry(child_widget=new_point, nn_scheme=self, window=self.parent())
 
         widget.move(new_point)
         widget.show()
@@ -72,6 +61,7 @@ class NNSchemeWidget(QFrame):
         x = event.x()
         y = event.y()
         print(f"Cursor position: x={x}, y={y}")
+
     def check_geometry(self, child_widget, nn_scheme, window):
         child_geometry = child_widget
         nn_scheme_geometry = nn_scheme.geometry()
@@ -85,7 +75,7 @@ class NNSchemeWidget(QFrame):
         print("set_moved_widget_id", widget_id)
         self.moved_widget_id = widget_id
 
-    def update_widgets_holder(self, widget: AddWidget):
+    def update_widgets_holder(self, widget):
         key = np.max(list(self.widgets.keys())) + 1 if self.widgets else 0
         widget.widget_id = key
         widget.setParent(self)

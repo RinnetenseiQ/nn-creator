@@ -123,19 +123,24 @@ class TestFrame(QFrame):
 
 
 class EventFilter(QObject):
-    def init(self, wigets):
-        self.wigets = wigets
+    def __init__(self, wigets=None):
+        super().__init__()
+        self.wigets = wigets if wigets else []
 
     def eventFilter(self, obj, event):
         # print("Event Filter: sum event happend")
         if event.type() == QEvent.MouseButtonRelease:
-            for widget in self.wigets.values():
+            for widget in self.wigets:
                 widget.show()
                 widget.update()
 
             print("Event Filter: Mouse Button Release")
 
         return super().eventFilter(obj, event)
+
+    def update_widgets_list(self, widget):
+        if widget not in self.wigets:
+            self.wigets.append(widget)
 
 
 if __name__ == '__main__':
@@ -145,8 +150,7 @@ if __name__ == '__main__':
     window2.layout().addWidget(frame)
     window2.show()
 
-    event_filter = EventFilter()
-    event_filter.init(frame.widgets)
+    event_filter = EventFilter(list(frame.widgets.values()))
     app.installEventFilter(event_filter)
 
     sys.exit(app.exec_())

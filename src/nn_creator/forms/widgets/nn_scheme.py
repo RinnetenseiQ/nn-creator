@@ -10,16 +10,17 @@ from PyQt5.QtCore import QThread, pyqtSignal, QObject
 import numpy as np
 
 
-
 class CursorPos(QObject):
     def __init__(self, window):
         super().__init__()
         self.window = window
+
     def run(self):
         pos = self.window.mapFromGlobal(self.cursor().pos())
         x = pos.x()
         y = pos.y()
         print(f"Cursor position: x={x}, y={y}")
+
 
 class NNSchemeWidget(QFrame):
     def __init__(self, parent=None):
@@ -70,7 +71,6 @@ class NNSchemeWidget(QFrame):
         # if not parent_geometry.contains(child_geometry):
         #     print("Child widget is outside parent widget bounds")
 
-
     def set_moved_widget_id(self, widget_id):
         print("set_moved_widget_id", widget_id)
         self.moved_widget_id = widget_id
@@ -88,7 +88,9 @@ class NNSchemeWidget(QFrame):
 
     def delete_widget_id(self, widget_id):
         print(f"delete: {widget_id}")
+        self.widgets[widget_id].close()
         self.widgets.pop(widget_id)
+
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)

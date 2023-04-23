@@ -1,3 +1,5 @@
+EXAMPLE_THEME = "Example Theme"
+
 layers_icons = {"Example Theme": {"activation": "icons8-curve-64.png",
                                   "add": "icons8-добавить-50.png",
                                   "average": "icons8-среднее-32.png",

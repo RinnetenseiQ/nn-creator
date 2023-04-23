@@ -6,7 +6,7 @@ import sys
 from nn_creator.forms.implemented.create_project_dialog import CreateProjectDialog
 from nn_creator.forms.from_ui.StartWindow_parent import Ui_NNCreatorStartWindow
 from nn_creator.forms.implemented.project_editor_window import ProjectEditorWindow
-from nn_creator.forms.widgets.nn_elements.add_widget import EventFilter
+from nn_creator.forms.utils.event_filters import GlobalEventFilter
 
 
 class NNCreatorStartWindow(QtWidgets.QMainWindow, Ui_NNCreatorStartWindow):
@@ -49,7 +49,7 @@ if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
     app.setStyle('Fusion')
 
-    event_filter = EventFilter()
+    event_filter = GlobalEventFilter()
     app.installEventFilter(event_filter)
 
     capture_window = NNCreatorStartWindow(event_filter=event_filter)

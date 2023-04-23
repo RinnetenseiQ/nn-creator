@@ -17,9 +17,9 @@ class IconLabel(QWidget):
 
     create_widget_signal = pyqtSignal(AddWidget)
 
-    def __init__(self, icon_pixmap, text, drag_pixmap=None, parent=None, final_stretch=True, ):
+    def __init__(self, icon_pixmap, text, created_widget, parent=None, final_stretch=True):
         super().__init__(parent)
-        self.drag_pixmap = drag_pixmap if drag_pixmap else self.grab()
+        self.created_widget = created_widget
         layout = QHBoxLayout()
         layout.setContentsMargins(0, 0, 0, 0)
         self.setLayout(layout)
@@ -39,13 +39,14 @@ class IconLabel(QWidget):
         print("mouse move-----")
         # self.sender_signal.emit(self.widget_id)
         if event.buttons() == Qt.LeftButton:
-            widget = AddWidget(parent=self.window())
+            widget = self.created_widget(parent=self.window())
             widget.hide()
+            drag_pixmap = widget.pixmap
             self.create_widget_signal.emit(widget)
             mime_data = QtCore.QMimeData()
             drag = QtGui.QDrag(self)
             drag.setMimeData(mime_data)
-            drag.setPixmap(self.drag_pixmap)
+            drag.setPixmap(drag_pixmap)
             drag.setHotSpot(event.pos() - self.rect().topLeft())
             drag.exec_(Qt.CopyAction | Qt.MoveAction)
 
@@ -112,7 +113,7 @@ if __name__ == '__main__':
     list_widget.addItem(item)
 
     pixmap = QPixmap("data/resources/icons/Example_Theme/layers/add/icons8-добавить-50.png")
-    icon_label = IconLabel(icon_pixmap=pixmap, drag_pixmap=pixmap.scaled(30, 30), text="add")
+    icon_label = IconLabel(icon_pixmap=pixmap, text="add")
     item.setSizeHint(icon_label.minimumSizeHint())
     list_widget.setItemWidget(item, icon_label)
     window2.layout().addWidget(list_widget)

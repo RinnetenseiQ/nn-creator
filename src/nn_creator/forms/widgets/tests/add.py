@@ -163,8 +163,8 @@ class EventFilter(QObject):
         #     print("Event Filter: Mouse Button Release")
 
         if event.type() == QEvent.Drop:
-            self.wigets[0].pixmap = self.non_empty_pixmap
-            self.wigets[1].pixmap = self.non_empty_pixmap
+            self.wigets[0]._pixmap = self.non_empty_pixmap
+            self.wigets[1]._pixmap = self.non_empty_pixmap
 
             self.wigets[0].update()
             self.wigets[1].update()

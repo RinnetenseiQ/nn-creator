@@ -8,37 +8,27 @@ from nn_creator.forms.widgets.test_frame import TestFrame
 from uuid import uuid4
 
 
-class DenseWidget(BaseNNWidget):
+class ActivationWidget(BaseNNWidget):
 
     def __init__(self,
                  parent=None,
                  widget_id=None,
                  position=None):
-        widget_size = (120, 60)
-        pixmap = QPixmap("data/resources/nn_elements/dense.png")
+        widget_size = (125, 65)
+        pixmap = QPixmap("data/resources/nn_elements/activation.png")
         super().__init__(parent=parent, pixmap=pixmap, widget_id=widget_id, position=position, size=widget_size)
         self.setFixedSize(*widget_size)
 
-        name = "dense_{}".format(uuid4())
-        self.cfg = {'class_name': 'Dense',
+        name = "activation_{}".format(uuid4())
+        self.cfg = {'class_name': 'Activation',
                     'config': {
-                        # 'name': 'dense_22',
+                        # 'name': 'activation_3',
                         # 'trainable': True,
                         # 'dtype': 'float32',
-                        # 'units': 10,
-                        'activation': 'linear',
-                        'use_bias': True,
-                        # 'kernel_initializer': {'class_name': 'GlorotUniform',
-                        #                        'config': {'seed': None}},
-                        # 'bias_initializer': {'class_name': 'Zeros', 'config': {}},
-                        # 'kernel_regularizer': None,
-                        # 'bias_regularizer': None,
-                        # 'activity_regularizer': None,
-                        # 'kernel_constraint': None,
-                        # 'bias_constraint': None
+                        'activation': 'linear'
                     },
                     'name': name,
-                    'inbound_nodes': [[['input_16', 0, 0, {}]]]}
+                    'inbound_nodes': []}
 
     def get_config(self):
         return self.cfg
@@ -48,14 +38,13 @@ class DenseWidget(BaseNNWidget):
         name = widgets[0].cfg["name"]
         self.cfg['inbound_nodes'] = [[[name, 0, 0, {}]]]
 
-    def set_config(self, units, use_bias=True):
-        self.cfg["config"]["units"] = units
-        self.cfg["config"]["use_bias"] = use_bias
+    def set_config(self, activation):
+        self.cfg["config"]["activation"] = activation
 
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    widget = DenseWidget(position=(10, 10))
+    widget = ActivationWidget(position=(10, 10))
     window = QMainWindow()
     frame = TestFrame(widgets=[widget])
     window.layout().addWidget(frame)

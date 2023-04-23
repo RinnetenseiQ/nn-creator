@@ -1,13 +1,52 @@
-from PyQt5.QtGui import QPaintEvent
-from PyQt5.QtWidgets import QWidget
+import sys
+
+from PyQt5.QtGui import QPaintEvent, QPixmap
+from PyQt5.QtWidgets import QWidget, QApplication, QMainWindow
+from nn_creator.forms.utils.event_filters import GlobalEventFilter
+from nn_creator.forms.widgets.nn_elements.base_class import BaseNNWidget
+from nn_creator.forms.widgets.test_frame import TestFrame
+from uuid import uuid4
 
 
-class InputLayerWidget(QWidget):
-    def __init__(self):
-        super().__init__()
+class InputWidget(BaseNNWidget):
 
-        self.update()
+    def __init__(self,
+                 parent=None,
+                 input_shape=None,
+                 widget_id=None,
+                 position=None):
+        widget_size = (120, 60)
+        pixmap = QPixmap("data/resources/nn_elements/input.png")
+        super().__init__(parent=parent, pixmap=pixmap, widget_id=widget_id, position=position, size=widget_size)
+        self.setFixedSize(*widget_size)
 
-    def paintEvent(self, event: QPaintEvent) -> None:
+        shape = (None, *input_shape) if input_shape else (None, None)
+        name = "input_{}".format(uuid4())
+        self.cfg = {'class_name': 'InputLayer',
+                    'config': {'batch_input_shape': shape,
+                               'dtype': 'float32',
+                               'sparse': False,
+                               'ragged': False,
+                               'name': name},
+                    'name': 'input_4',
+                    'inbound_nodes': []}
+
+    def get_config(self):
+        return self.config
+
+    def connect(self, widgets: list[BaseNNWidget]):
         pass
 
+    def set_input_shape(self, shape):
+        self.config["config"]['batch_input_shape'] = (None, *shape)
+
+
+if __name__ == '__main__':
+    app = QApplication(sys.argv)
+    widget = InputWidget(position=(10, 10))
+    window = QMainWindow()
+    frame = TestFrame(widgets=[widget])
+    window.layout().addWidget(frame)
+    window.show()
+
+    sys.exit(app.exec_())

@@ -60,8 +60,8 @@ class ProjectEditorWindow(QMainWindow, Ui_ProjectEditorWindow):
             icon_widget.create_widget_signal.connect(self.event_filter.update_widgets_list)
 
         for widget, label, icon_path in zip(trainable_widgets,
-                                       trainable_widgets_labels,
-                                       trainable_widgets_icons):
+                                            trainable_widgets_labels,
+                                            trainable_widgets_icons):
             temp = QTreeWidgetItem(trainable_group_item)
             trainable_group_item.addChild(temp)
             icon_widget = IconLabel(icon_pixmap=QPixmap(icon_path), text=label, created_widget=widget)

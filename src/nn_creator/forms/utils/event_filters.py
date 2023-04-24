@@ -11,6 +11,8 @@ import numpy as np
 
 
 class GlobalEventFilter(QObject):
+    connection_mode_signal = pyqtSignal(bool)
+
     def __init__(self, widgets=None):
         super().__init__()
         self.widgets = widgets if widgets else {}

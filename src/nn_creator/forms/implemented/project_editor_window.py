@@ -4,10 +4,10 @@ from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QFileDialog, QMainWindow, QTreeWidgetItem, QTreeWidget
 from nn_creator.forms.from_ui.ProjectWindow_parent import Ui_ProjectEditorWindow
 from nn_creator.forms.widgets.icon_widget import IconLabel
-from nn_creator.forms.widgets.nn_elements.base_class import BaseNNWidget
 from nn_creator.forms.widgets.nn_scheme import NNSchemeWidget
 from nn_creator.forms.widgets.pandas_model import PandasModel
 import nn_creator.forms.widgets.nn_elements as nn_widgets
+from nn_creator.forms.widgets.base_classes import BaseNNWidget
 
 non_trainable_widgets = [nn_widgets.InputWidget,
                          nn_widgets.AddWidget,

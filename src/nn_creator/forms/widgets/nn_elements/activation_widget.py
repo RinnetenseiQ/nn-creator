@@ -1,11 +1,7 @@
-import sys
-
-from PyQt5.QtGui import QPaintEvent, QPixmap
-from PyQt5.QtWidgets import QWidget, QApplication, QMainWindow
-from nn_creator.forms.utils.event_filters import GlobalEventFilter
-from nn_creator.forms.widgets.nn_elements.base_class import BaseNNWidget
-from nn_creator.forms.widgets.test_frame import TestFrame
 from uuid import uuid4
+
+from PyQt5.QtGui import QPixmap
+from nn_creator.forms.widgets.base_classes import BaseNNWidget
 
 
 class ActivationWidget(BaseNNWidget):
@@ -41,13 +37,3 @@ class ActivationWidget(BaseNNWidget):
     def set_config(self, activation):
         self.cfg["config"]["activation"] = activation
 
-
-if __name__ == '__main__':
-    app = QApplication(sys.argv)
-    widget = ActivationWidget(position=(10, 10))
-    window = QMainWindow()
-    frame = TestFrame(widgets=[widget])
-    window.layout().addWidget(frame)
-    window.show()
-
-    sys.exit(app.exec_())

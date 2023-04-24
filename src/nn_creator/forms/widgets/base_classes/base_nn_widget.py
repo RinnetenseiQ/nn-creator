@@ -1,21 +1,21 @@
-import sys
-
-from PyQt5.QtCore import QSize, pyqtSignal, QObject, QEvent, QPoint
-from PyQt5.QtGui import QPaintEvent, QPainter, QPixmap
-from PyQt5.QtWidgets import QWidget, QApplication, QMainWindow, QGridLayout, QLabel, QFrame, QMenu
-from PyQt5 import QtCore, QtGui
-import PyQt5
-from PyQt5.QtCore import Qt
 from abc import abstractmethod
+
+from PyQt5 import QtCore, QtGui
+from PyQt5.QtCore import QSize, pyqtSignal, QPoint, Qt
+from PyQt5.QtGui import QPaintEvent, QPainter
+from PyQt5.QtWidgets import QWidget, QMenu
+from nn_creator.forms.widgets.connection import ConnectionWidget
 
 
 class BaseNNWidget(QWidget):
     delete_widget_signal = pyqtSignal(int)
     cast_id_signal = pyqtSignal(int)
+    connection_create_signal = pyqtSignal(ConnectionWidget)
 
     def __init__(self, pixmap, parent=None, widget_id=None, position=(0, 0), size=(30, 30)):
         self.cfg = None
         super().__init__(parent=parent)
+        self.is_connection_mode = False
         self.widget_id = widget_id
         self.setFixedSize(*size)
         self.setAcceptDrops(True)
@@ -27,6 +27,7 @@ class BaseNNWidget(QWidget):
             self.move(self.position)
         self.drag_start_position = self.pos()
         self.update()
+        print("widget constructed")
 
     @abstractmethod
     def get_config(self):
@@ -46,11 +47,15 @@ class BaseNNWidget(QWidget):
         painter.drawPixmap(self.rect(), self._pixmap)
         painter.end()
 
+
+
+
     def mousePressEvent(self, event):
         print("mouse press")
         if event.button() == Qt.LeftButton:
             # Запоминаем позицию относительно виджета
             self.drag_start_position = event.pos()
+
 
     def mouseMoveEvent(self, event):
         print("mouse move-")
@@ -93,5 +98,10 @@ class BaseNNWidget(QWidget):
         if action == delete_action:
             self.delete_widget_signal.emit(self.widget_id)
             self.close()
-        if action == connect_action:
-            pass
+        elif action == connect_action:
+            conn = ConnectionWidget(start_widget=self, parent=self.window())
+            self.connection_create_signal.emit(conn)
+
+
+    def set_connection_mode(self, flag):
+        self.is_connection_mode = flag

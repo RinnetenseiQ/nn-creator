@@ -1,12 +1,7 @@
-import sys
-
-from PyQt5.QtCore import QSize, pyqtSignal, QObject, QEvent
-from PyQt5.QtGui import QPaintEvent, QPainter, QPixmap
-from PyQt5.QtWidgets import QWidget, QApplication, QMainWindow, QGridLayout, QLabel, QFrame, QMenu
-from PyQt5 import QtCore, QtGui
-import PyQt5
+from PyQt5.QtWidgets import QFrame
+from PyQt5 import QtCore
 from PyQt5.QtCore import Qt
-from nn_creator.forms.widgets.nn_elements.base_class import BaseNNWidget
+from nn_creator.forms.widgets.base_classes import BaseNNWidget
 
 
 class TestFrame(QFrame):

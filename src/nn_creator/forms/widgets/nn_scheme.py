@@ -25,6 +25,7 @@ class CursorPos(QObject):
 class NNSchemeWidget(QFrame):
     def __init__(self, parent=None):
         super().__init__(parent=parent)
+        self.setObjectName("yelow")
         self.setFixedSize(300, 300)
         self.setAcceptDrops(True)
         self.widgets = {}

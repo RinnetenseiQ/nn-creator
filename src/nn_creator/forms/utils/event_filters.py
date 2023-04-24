@@ -6,6 +6,8 @@ from PyQt5.QtWidgets import QWidget, QApplication, QMainWindow, QGridLayout, QLa
 from PyQt5 import QtCore, QtGui
 import PyQt5
 from PyQt5.QtCore import Qt
+
+from nn_creator.forms.widgets.nn_scheme import NNSchemeWidget
 from nn_creator.forms.widgets.test_frame import TestFrame
 import numpy as np
 
@@ -22,6 +24,10 @@ class GlobalEventFilter(QObject):
             if self.widgets:
                 self.widgets[self.moved_widget_id].show()
             print("Event Filter: Mouse Button Release")
+        if event.type() == QEvent.MouseButtonPress:
+            if type(obj) == NNSchemeWidget:
+                print("This is NNSchemeWidget")
+
 
         return super().eventFilter(obj, event)
 

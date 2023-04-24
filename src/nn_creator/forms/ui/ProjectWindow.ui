@@ -24,7 +24,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>1</number>
     </property>
     <widget class="QWidget" name="tab">
      <attribute name="title">
@@ -247,7 +247,12 @@
         <widget class="QTreeWidget" name="model_properties_TW">
          <column>
           <property name="text">
-           <string notr="true">1</string>
+           <string notr="true">Property</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Value</string>
           </property>
          </column>
         </widget>

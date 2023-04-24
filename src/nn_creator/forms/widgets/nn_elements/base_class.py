@@ -12,6 +12,7 @@ from abc import abstractmethod
 class BaseNNWidget(QWidget):
     delete_widget_signal = pyqtSignal(int)
     cast_id_signal = pyqtSignal(int)
+    mouse_press_signal = pyqtSignal(int)
 
     def __init__(self, pixmap, parent=None, widget_id=None, position=(0, 0), size=(30, 30)):
         self.cfg = None
@@ -51,6 +52,7 @@ class BaseNNWidget(QWidget):
         if event.button() == Qt.LeftButton:
             # Запоминаем позицию относительно виджета
             self.drag_start_position = event.pos()
+            self.mouse_press_signal.emit(self.widget_id)
 
     def mouseMoveEvent(self, event):
         print("mouse move-")

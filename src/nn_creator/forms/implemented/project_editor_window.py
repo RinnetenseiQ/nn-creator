@@ -6,6 +6,7 @@ from nn_creator.forms.from_ui.ProjectWindow_parent import Ui_ProjectEditorWindow
 from nn_creator.forms.widgets.icon_widget import IconLabel
 from nn_creator.forms.widgets.nn_elements.base_class import BaseNNWidget
 from nn_creator.forms.widgets.nn_scheme import NNSchemeWidget
+from nn_creator.forms.widgets.nn_property import NNPropertyWidget
 from nn_creator.forms.widgets.pandas_model import PandasModel
 import nn_creator.forms.widgets.nn_elements as nn_widgets
 
@@ -68,7 +69,12 @@ class ProjectEditorWindow(QMainWindow, Ui_ProjectEditorWindow):
             self.model_blocks_TW.setItemWidget(temp, 0, icon_widget)
             icon_widget.create_widget_signal.connect(self.scrollArea.update_widgets_holder)
             icon_widget.create_widget_signal.connect(self.event_filter.update_widgets_list)
-
+        #TODO: fix size NNPropertyWidget
+        b = NNPropertyWidget(parent=self.model_properties_TW.parent())
+        b.setGeometry(1181, 1, 256, 689)
+        # b.setFixedSize(self.model_properties_TW.size())
+        self.property_area = b
+        icon_widget.create_widget_signal.connect(self.property_area.update_widgets_holder)
         print("")
 
     def _connect_all(self):

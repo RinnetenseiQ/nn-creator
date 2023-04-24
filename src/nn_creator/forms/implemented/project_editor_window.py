@@ -3,6 +3,7 @@ from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QFileDialog, QMainWindow, QTreeWidgetItem, QTreeWidget
 from nn_creator.forms.from_ui.ProjectWindow_parent import Ui_ProjectEditorWindow
+from nn_creator.forms.utils.event_filters import GlobalEventFilter2
 from nn_creator.forms.widgets.icon_widget import IconLabel
 from nn_creator.forms.widgets.nn_scheme import NNSchemeWidget
 from nn_creator.forms.widgets.pandas_model import PandasModel
@@ -29,19 +30,23 @@ trainable_widgets_icons = [
 class ProjectEditorWindow(QMainWindow, Ui_ProjectEditorWindow):
     update_event_filter_signal = pyqtSignal(BaseNNWidget)
 
-    def __init__(self, path, event_filter=None):
+    def __init__(self, path, event_filter: GlobalEventFilter2 = None):
         super().__init__()
-        self.event_filter = event_filter
+        self._event_filter = event_filter
         self.path = path
         self.setupUi(self)
         self._init_widgets()
         self._connect_all()
 
+    @property
+    def event_filter(self):
+        return self._event_filter
+
     def _init_widgets(self):
         self.dataset_type_CB.addItems(["Table(1D, .csv, .txt, .xlsx, etc)",
                                        "Labeled images"])
 
-        a = NNSchemeWidget(parent=self.scrollArea.parent())
+        a = NNSchemeWidget(parent=self.scrollArea.parent(), event_filter=self.event_filter)
         a.setFixedSize(self.scrollArea.size())
         self.scrollArea = a
         trainable_group_item = self.model_blocks_TW.topLevelItem(0)
@@ -56,8 +61,8 @@ class ProjectEditorWindow(QMainWindow, Ui_ProjectEditorWindow):
             non_trainable_group_item.addChild(temp)
             icon_widget = IconLabel(icon_pixmap=QPixmap(icon_path), text=label, created_widget=widget)
             self.model_blocks_TW.setItemWidget(temp, 0, icon_widget)
-            icon_widget.create_widget_signal.connect(self.scrollArea.update_widgets_holder)
-            icon_widget.create_widget_signal.connect(self.event_filter.update_widgets_list)
+            # icon_widget.create_widget_signal.connect(self.scrollArea.update_children)
+            icon_widget.create_widget_signal.connect(self.event_filter.update_nn_scheme_widgets_list)
 
         for widget, label, icon_path in zip(trainable_widgets,
                                             trainable_widgets_labels,
@@ -66,8 +71,8 @@ class ProjectEditorWindow(QMainWindow, Ui_ProjectEditorWindow):
             trainable_group_item.addChild(temp)
             icon_widget = IconLabel(icon_pixmap=QPixmap(icon_path), text=label, created_widget=widget)
             self.model_blocks_TW.setItemWidget(temp, 0, icon_widget)
-            icon_widget.create_widget_signal.connect(self.scrollArea.update_widgets_holder)
-            icon_widget.create_widget_signal.connect(self.event_filter.update_widgets_list)
+            # icon_widget.create_widget_signal.connect(self.scrollArea.update_children)
+            icon_widget.create_widget_signal.connect(self.event_filter.update_nn_scheme_widgets_list)
 
         print("")
 

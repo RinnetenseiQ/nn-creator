@@ -48,8 +48,6 @@ class BaseNNWidget(QWidget):
         painter.end()
 
 
-
-
     def mousePressEvent(self, event):
         print("mouse press")
         if event.button() == Qt.LeftButton:

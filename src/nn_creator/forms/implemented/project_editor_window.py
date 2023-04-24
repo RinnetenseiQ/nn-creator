@@ -79,12 +79,7 @@ class ProjectEditorWindow(QMainWindow, Ui_ProjectEditorWindow):
             icon_widget.create_widget_signal.connect(self.scrollArea.update_widgets_holder)
             icon_widget.create_widget_signal.connect(self.property_area.update_widgets_holder)
             icon_widget.create_widget_signal.connect(self.event_filter.update_widgets_list)
-        #TODO: fix size NNPropertyWidget
-        b = NNPropertyWidget(parent=self.model_properties_TW.parent())
-        b.setGeometry(1181, 1, 256, 689)
-        # b.setFixedSize(self.model_properties_TW.size())
-        self.property_area = b
-        icon_widget.create_widget_signal.connect(self.property_area.update_widgets_holder)
+
         print("")
 
     def _connect_all(self):

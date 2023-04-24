@@ -10,6 +10,9 @@ from nn_creator.forms.widgets.nn_property import NNPropertyWidget
 from nn_creator.forms.widgets.pandas_model import PandasModel
 import nn_creator.forms.widgets.nn_elements as nn_widgets
 
+from nn_creator.forms.widgets.nn_property import NNPropertyWidget
+
+
 non_trainable_widgets = [nn_widgets.InputWidget,
                          nn_widgets.AddWidget,
                          nn_widgets.ActivationWidget]
@@ -41,6 +44,11 @@ class ProjectEditorWindow(QMainWindow, Ui_ProjectEditorWindow):
     def _init_widgets(self):
         self.dataset_type_CB.addItems(["Table(1D, .csv, .txt, .xlsx, etc)",
                                        "Labeled images"])
+        # TODO: fix size NNPropertyWidget
+        b = NNPropertyWidget(parent=self.model_properties_TW)
+        # b.setGeometry(1181, 1, 256, 689)
+        # b.setFixedSize(self.model_properties_TW.size())
+        self.property_area = b
 
         a = NNSchemeWidget(parent=self.scrollArea.parent())
         a.setFixedSize(self.scrollArea.size())
@@ -58,6 +66,7 @@ class ProjectEditorWindow(QMainWindow, Ui_ProjectEditorWindow):
             icon_widget = IconLabel(icon_pixmap=QPixmap(icon_path), text=label, created_widget=widget)
             self.model_blocks_TW.setItemWidget(temp, 0, icon_widget)
             icon_widget.create_widget_signal.connect(self.scrollArea.update_widgets_holder)
+            icon_widget.create_widget_signal.connect(self.property_area.update_widgets_holder)
             icon_widget.create_widget_signal.connect(self.event_filter.update_widgets_list)
 
         for widget, label, icon_path in zip(trainable_widgets,
@@ -68,6 +77,7 @@ class ProjectEditorWindow(QMainWindow, Ui_ProjectEditorWindow):
             icon_widget = IconLabel(icon_pixmap=QPixmap(icon_path), text=label, created_widget=widget)
             self.model_blocks_TW.setItemWidget(temp, 0, icon_widget)
             icon_widget.create_widget_signal.connect(self.scrollArea.update_widgets_holder)
+            icon_widget.create_widget_signal.connect(self.property_area.update_widgets_holder)
             icon_widget.create_widget_signal.connect(self.event_filter.update_widgets_list)
         #TODO: fix size NNPropertyWidget
         b = NNPropertyWidget(parent=self.model_properties_TW.parent())

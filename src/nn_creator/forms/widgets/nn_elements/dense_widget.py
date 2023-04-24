@@ -23,9 +23,9 @@ class DenseWidget(BaseNNWidget):
         self.cfg = {'class_name': 'Dense',
                     'config': {
                         # 'name': 'dense_22',
-                        # 'trainable': True,
+                        'trainable': True,
                         # 'dtype': 'float32',
-                        # 'units': 10,
+                        'units': 10,
                         'activation': 'linear',
                         'use_bias': True,
                         # 'kernel_initializer': {'class_name': 'GlorotUniform',

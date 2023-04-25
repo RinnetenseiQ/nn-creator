@@ -4,7 +4,7 @@ from PyQt5 import QtCore, QtGui
 from PyQt5.QtCore import QSize, pyqtSignal, QPoint, Qt
 from PyQt5.QtGui import QPaintEvent, QPainter
 from PyQt5.QtWidgets import QWidget, QMenu
-from nn_creator.forms.widgets.connection import ConnectionWidget
+from nn_creator.forms.widgets.tests.connection import ConnectionWidget
 
 
 class BaseNNWidget(QWidget):
@@ -23,6 +23,9 @@ class BaseNNWidget(QWidget):
         self.position = QPoint(*position)
         # self.setDragEnabled(True)
         self._pixmap = pixmap.scaled(*size)
+
+        self.input_connections = []
+        self.output_connections = []
         if position:
             self.move(self.position)
         self.drag_start_position = self.pos()
@@ -47,13 +50,11 @@ class BaseNNWidget(QWidget):
         painter.drawPixmap(self.rect(), self._pixmap)
         painter.end()
 
-
     def mousePressEvent(self, event):
         print("mouse press")
         if event.button() == Qt.LeftButton:
             # Запоминаем позицию относительно виджета
             self.drag_start_position = event.pos()
-
 
     def mouseMoveEvent(self, event):
         print("mouse move-")
@@ -97,8 +98,12 @@ class BaseNNWidget(QWidget):
             self.delete_widget_signal.emit(self.widget_id)
             self.close()
         elif action == connect_action:
-            conn = ConnectionWidget(start_widget=self, parent=self.window())
+            conn = ConnectionWidget(start_widget=self,
+                                    # parent=self.window()
+                                    )
             self.connection_create_signal.emit(conn)
+            # self.output_connections.append(conn)
+
 
 
     def set_connection_mode(self, flag):

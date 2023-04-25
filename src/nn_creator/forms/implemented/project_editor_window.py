@@ -47,8 +47,10 @@ class ProjectEditorWindow(QMainWindow, Ui_ProjectEditorWindow):
                                        "Labeled images"])
 
         a = NNSchemeWidget(parent=self.scrollArea.parent(), event_filter=self.event_filter)
+
         a.setFixedSize(self.scrollArea.size())
         self.scrollArea = a
+        self.event_filter.connection_create_signal.connect(self.scrollArea.update_children)
         trainable_group_item = self.model_blocks_TW.topLevelItem(0)
         trainable_group_item.setExpanded(True)
         non_trainable_group_item = self.model_blocks_TW.topLevelItem(1)

@@ -4,10 +4,10 @@ import numpy as np
 from PyQt5 import QtCore
 from PyQt5.QtCore import Qt, QObject, pyqtSlot, pyqtSignal
 from PyQt5.QtGui import QMouseEvent
-from PyQt5.QtWidgets import QApplication, QMainWindow, QFrame
+from PyQt5.QtWidgets import QApplication, QMainWindow, QFrame, QWidget
 from nn_creator.forms.utils.event_filters import GlobalEventFilter2
 from nn_creator.forms.widgets.base_classes import BaseNNWidget
-from nn_creator.forms.widgets.connection import ConnectionWidget
+from nn_creator.forms.widgets.tests.connection import ConnectionWidget
 
 
 class CursorPos(QObject):
@@ -66,8 +66,15 @@ class NNSchemeWidget(QFrame):
         e.accept()
 
     # @pyqtSlot()
-    def update_children(self, child: BaseNNWidget):
+    def update_children(self, child: QWidget):
         child.setParent(self)
+        if isinstance(child, ConnectionWidget):
+            child.set_paint_mode(True)
+            print(child.geometry())
+            print(self.geometry())
+            child.show()
+
+        # child.show()
 
 
 

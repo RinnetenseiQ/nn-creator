@@ -61,7 +61,7 @@ class ProjectEditorWindow(QMainWindow, Ui_ProjectEditorWindow):
             non_trainable_group_item.addChild(temp)
             icon_widget = IconLabel(icon_pixmap=QPixmap(icon_path), text=label, created_widget=widget)
             self.model_blocks_TW.setItemWidget(temp, 0, icon_widget)
-            # icon_widget.create_widget_signal.connect(self.scrollArea.update_children)
+            icon_widget.create_widget_signal.connect(self.scrollArea.update_children)
             icon_widget.create_widget_signal.connect(self.event_filter.update_nn_scheme_widgets_list)
 
         for widget, label, icon_path in zip(trainable_widgets,
@@ -71,7 +71,7 @@ class ProjectEditorWindow(QMainWindow, Ui_ProjectEditorWindow):
             trainable_group_item.addChild(temp)
             icon_widget = IconLabel(icon_pixmap=QPixmap(icon_path), text=label, created_widget=widget)
             self.model_blocks_TW.setItemWidget(temp, 0, icon_widget)
-            # icon_widget.create_widget_signal.connect(self.scrollArea.update_children)
+            icon_widget.create_widget_signal.connect(self.scrollArea.update_children)
             icon_widget.create_widget_signal.connect(self.event_filter.update_nn_scheme_widgets_list)
 
         print("")

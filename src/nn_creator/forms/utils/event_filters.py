@@ -16,6 +16,7 @@ class GlobalEventFilter2(QObject):
         super().__init__()
         self._nn_scheme_widgets: dict = {}
         self._nn_scheme_moved_widget_id: int = -1
+        self._last_nn_scheme_deleted_widget_id: int = -1
 
     @property
     def nn_scheme_widgets(self):
@@ -23,7 +24,7 @@ class GlobalEventFilter2(QObject):
 
     # @pyqtSlot()
     def update_nn_scheme_widgets_list(self, widget):
-        key = np.max(list(self.nn_scheme_widgets.keys())) + 1 if self.nn_scheme_widgets else 0
+        key = np.max(list(self.nn_scheme_widgets.keys())) + 2 if self.nn_scheme_widgets else 1
         widget.widget_id = key
         widget.cast_id_signal.connect(self.set_nn_widget_moved_widget_id)
         widget.delete_widget_signal.connect(self.delete_nn_scheme_widget)
@@ -39,6 +40,7 @@ class GlobalEventFilter2(QObject):
         self.nn_scheme_widgets.pop(widget_id)
         widget.setParent(None)
         widget.close()
+        self._last_nn_scheme_deleted_widget_id = widget_id
 
     @property
     def nn_scheme_moved_widget_id(self):
@@ -51,8 +53,14 @@ class GlobalEventFilter2(QObject):
     def eventFilter(self, obj, event):
         # print("Event Filter: sum event happend")
         if event.type() == QEvent.MouseButtonRelease:
-            if self.nn_scheme_widgets:
-                self.nn_scheme_widgets[self.nn_scheme_moved_widget_id].show()
+            try:
+                if self.nn_scheme_widgets:
+                    if self._last_nn_scheme_deleted_widget_id != self.nn_scheme_moved_widget_id and self.nn_scheme_moved_widget_id > -1:
+                        self.nn_scheme_widgets[self.nn_scheme_moved_widget_id].show()
+            except KeyError as e:
+                print(e)
+
+            self._nn_scheme_moved_widget_id = -1
             print("Event Filter: Mouse Button Release")
 
         return super().eventFilter(obj, event)
@@ -92,3 +100,5 @@ class GlobalEventFilter(QObject):
     def delete_widget_id(self, widget_id):
         print(f"delete: {widget_id}")
         self.widgets.pop(widget_id)
+
+

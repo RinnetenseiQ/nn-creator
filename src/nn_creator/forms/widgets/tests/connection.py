@@ -189,6 +189,7 @@ class ConnectionWidget(QWidget):
                     self.set_paint_mode(False)
                     self.set_end_widget(widget)
                     widget.input_connections.append(self)
+
                 widget.raise_()
         print("connection press event")
 

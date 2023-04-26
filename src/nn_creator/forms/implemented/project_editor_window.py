@@ -48,13 +48,8 @@ class ProjectEditorWindow(QMainWindow, Ui_ProjectEditorWindow):
                                        "Labeled images"])
 
 
-        # geom = self.model_properties_TW.size()
-        # p = self.model_properties_TW.parent()
-        # self.model_properties_TW = NNPropertyWidget(parent=self.model_properties_TW, event_filter=self.event_filter)
-        #
         b = NNPropertyWidget(parent=self.model_properties_TW.parent(), event_filter=self.event_filter)
         b.setFixedSize(self.model_properties_TW.size())
-        b.move(self.model_properties_TW.pos())
         self.model_properties_TW = b
 
         a = NNSchemeWidget(parent=self.scrollArea.parent(), event_filter=self.event_filter)

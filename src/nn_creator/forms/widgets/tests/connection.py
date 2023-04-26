@@ -190,9 +190,8 @@ class ConnectionWidget(QWidget):
                 if geom.contains(pos):
                     self.set_paint_mode(False)
                     self.set_end_widget(widget)
+                    self.event_filter._nn_scheme_painted_connection_id = -1
                     widget.input_connections.append(self)
-                    break
-
                 widget.raise_()
         print("connection press event")
 

@@ -117,15 +117,15 @@ class GlobalEventFilter2(QObject):
                 event.accept()
             else:
                 event.ignore()
-            # if not flag:
-            #     print("Esc released")
-            #     if self._nn_scheme_painted_connection_id != -1:
+
+            # print("Esc released")
+            # if self._nn_scheme_painted_connection_id != -1:
             #
-            #         conn = self.nn_scheme_connections[self._nn_scheme_painted_connection_id]
-            #         self.delete_connection(self._nn_scheme_painted_connection_id)
-            #         conn.close()
-            #         self.set_nn_scheme_painted_connection_id(-1)
-            #         event.accept()
+            #     conn = self.nn_scheme_connections[self._nn_scheme_painted_connection_id]
+            #     self.delete_connection(self._nn_scheme_painted_connection_id)
+            #     conn.close()
+            #     self.set_nn_scheme_painted_connection_id(-1)
+            #     event.accept()
 
 
         return super().eventFilter(obj, event)

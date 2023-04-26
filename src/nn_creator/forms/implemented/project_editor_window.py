@@ -3,11 +3,12 @@ from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QFileDialog, QMainWindow, QTreeWidgetItem, QTreeWidget
 from nn_creator.forms.from_ui.ProjectWindow_parent import Ui_ProjectEditorWindow
+from nn_creator.forms.utils.event_filters import GlobalEventFilter2
 from nn_creator.forms.widgets.icon_widget import IconLabel
-from nn_creator.forms.widgets.nn_elements.base_class import BaseNNWidget
 from nn_creator.forms.widgets.nn_scheme import NNSchemeWidget
 from nn_creator.forms.widgets.pandas_model import PandasModel
 import nn_creator.forms.widgets.nn_elements as nn_widgets
+from nn_creator.forms.widgets.base_classes import BaseNNWidget
 
 from nn_creator.forms.widgets.nn_property import NNPropertyWidget
 import numpy as np
@@ -32,14 +33,19 @@ trainable_widgets_icons = [
 class ProjectEditorWindow(QMainWindow, Ui_ProjectEditorWindow):
     update_event_filter_signal = pyqtSignal(BaseNNWidget)
 
-    def __init__(self, path, event_filter=None):
+    def __init__(self, path, event_filter: GlobalEventFilter2 = None):
         super().__init__()
-        self.event_filter = event_filter
+        # self.event_filter = event_filter
         self.widget_holder = None
+        self._event_filter = event_filter
         self.path = path
         self.setupUi(self)
         self._init_widgets()
         self._connect_all()
+
+    @property
+    def event_filter(self):
+        return self._event_filter
 
     def _init_widgets(self):
 
@@ -54,8 +60,11 @@ class ProjectEditorWindow(QMainWindow, Ui_ProjectEditorWindow):
         self.property_area = b
 
         a = NNSchemeWidget(parent=self.scrollArea.parent(), widget_holder=self.widget_holder)
+        # a = NNSchemeWidget(parent=self.scrollArea.parent(), event_filter=self.event_filter)
+
         a.setFixedSize(self.scrollArea.size())
         self.scrollArea = a
+        self.event_filter.connection_create_signal.connect(self.scrollArea.update_children)
         trainable_group_item = self.model_blocks_TW.topLevelItem(0)
         trainable_group_item.setExpanded(True)
         non_trainable_group_item = self.model_blocks_TW.topLevelItem(1)
@@ -76,6 +85,8 @@ class ProjectEditorWindow(QMainWindow, Ui_ProjectEditorWindow):
             icon_widget.create_widget_signal.connect(self.scrollArea.created_widget)
             icon_widget.create_widget_signal.connect(self.property_area.created_widget)
 
+            # icon_widget.create_widget_signal.connect(self.scrollArea.update_children)
+            # icon_widget.create_widget_signal.connect(self.event_filter.update_nn_scheme_widgets_list)
 
         for widget, label, icon_path in zip(trainable_widgets,
                                             trainable_widgets_labels,
@@ -84,9 +95,8 @@ class ProjectEditorWindow(QMainWindow, Ui_ProjectEditorWindow):
             trainable_group_item.addChild(temp)
             icon_widget = IconLabel(icon_pixmap=QPixmap(icon_path), text=label, created_widget=widget)
             self.model_blocks_TW.setItemWidget(temp, 0, icon_widget)
-            # icon_widget.create_widget_signal.connect(self.scrollArea.update_widgets_holder)
-            # icon_widget.create_widget_signal.connect(self.property_area.update_widgets_holder)
-            # icon_widget.create_widget_signal.connect(self.event_filter.update_widgets_list)
+            # icon_widget.create_widget_signal.connect(self.scrollArea.update_children)
+            # icon_widget.create_widget_signal.connect(self.event_filter.update_nn_scheme_widgets_list)
 
             icon_widget.create_widget_signal.connect(self.widget_holder.update_widgets_list)
             icon_widget.create_widget_signal.connect(self.event_filter.created_widget)
@@ -121,28 +131,3 @@ class ProjectEditorWindow(QMainWindow, Ui_ProjectEditorWindow):
             raise NotImplementedError()
 
         self.dataset_path_LE.setText(path[0])
-
-
-class WidgetHolder:
-    def __init__(self, widgets=None):
-        self.widgets = widgets if widgets else {}
-        self.moved_widget_id = None
-        self.last_deleted_widget = None
-
-    def set_moved_widget_id(self, widget_id):
-        self.moved_widget_id = widget_id
-
-    def update_widgets_list(self, widget):
-        key = np.max(list(self.widgets.keys())) + 2 if self.widgets else 1
-        widget.widget_id = key
-        widget.cast_id_signal.connect(self.set_moved_widget_id)
-        widget.delete_widget_signal.connect(self.delete_widget_id)
-        self.widgets[key] = widget
-        self.set_moved_widget_id(key)
-        # self.moved_widget_id = key
-        print(f"event filter widgets_ids: {self.widgets.keys()}")
-
-    def delete_widget_id(self, widget_id):
-        print(f"delete: {widget_id}")
-        self.widgets.pop(widget_id)
-        self.last_deleted_widget = widget_id

@@ -13,10 +13,12 @@ class BaseNNWidget(QWidget):
     delete_widget_signal = pyqtSignal(int)
     cast_id_signal = pyqtSignal(int)
     mouse_press_signal = pyqtSignal(int)
+    connection_create_signal = pyqtSignal(ConnectionWidget)
 
     def __init__(self, pixmap, parent=None, widget_id=None, position=(0, 0), size=(30, 30)):
         self.cfg = None
         super().__init__(parent=parent)
+        self.is_connection_mode = False
         self.widget_id = widget_id
         self.setFixedSize(*size)
         self.setAcceptDrops(True)
@@ -24,10 +26,14 @@ class BaseNNWidget(QWidget):
         self.position = QPoint(*position)
         # self.setDragEnabled(True)
         self._pixmap = pixmap.scaled(*size)
+
+        self.input_connections = []
+        self.output_connections = []
         if position:
             self.move(self.position)
         self.drag_start_position = self.pos()
         self.update()
+        print("widget constructed")
 
     @abstractmethod
     def get_config(self):
@@ -95,5 +101,14 @@ class BaseNNWidget(QWidget):
         if action == delete_action:
             self.delete_widget_signal.emit(self.widget_id)
             self.close()
-        if action == connect_action:
-            pass
+        elif action == connect_action:
+            conn = ConnectionWidget(start_widget=self,
+                                    # parent=self.window()
+                                    )
+            self.connection_create_signal.emit(conn)
+            # self.output_connections.append(conn)
+
+
+
+    def set_connection_mode(self, flag):
+        self.is_connection_mode = flag

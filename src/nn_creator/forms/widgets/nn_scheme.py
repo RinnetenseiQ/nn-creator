@@ -1,13 +1,13 @@
 import sys
 
-from PyQt5.QtCore import QSize, QMimeData
-from PyQt5.QtGui import QPaintEvent, QPainter, QPixmap, QDrag, QMouseEvent
-from PyQt5.QtWidgets import QWidget, QApplication, QMainWindow, QGridLayout, QLabel, QFrame, QPushButton
-from PyQt5 import QtCore, QtGui
-import PyQt5
-from PyQt5.QtCore import Qt
-from PyQt5.QtCore import QThread, pyqtSignal, QObject
 import numpy as np
+from PyQt5 import QtCore
+from PyQt5.QtCore import Qt, QObject, pyqtSlot, pyqtSignal
+from PyQt5.QtGui import QMouseEvent
+from PyQt5.QtWidgets import QApplication, QMainWindow, QFrame, QWidget
+from nn_creator.forms.utils.event_filters import GlobalEventFilter2
+from nn_creator.forms.widgets.base_classes import BaseNNWidget
+from nn_creator.forms.widgets.tests.connection import ConnectionWidget
 
 
 class CursorPos(QObject):
@@ -23,10 +23,14 @@ class CursorPos(QObject):
 
 
 class NNSchemeWidget(QFrame):
+    set_moved_widget_id_signal = pyqtSignal(int)
+
+    #def __init__(self, parent=None, event_filter: GlobalEventFilter2 = None):
     def __init__(self, parent=None, widget_holder=None):
         super().__init__(parent=parent)
         self.widget_holder = widget_holder
         self.setObjectName("yelow")
+        # self._event_filter = event_filter
         self.setFixedSize(300, 300)
         self.setAcceptDrops(True)
         self.widgets = self.widget_holder.widgets
@@ -37,6 +41,14 @@ class NNSchemeWidget(QFrame):
         # self.setDragEnabled(True)
         # self.update()
 
+    # @property
+    # def event_filter(self):
+    #     return self._event_filter
+    #
+    # @event_filter.setter
+    # def event_filter(self, value: GlobalEventFilter2):
+    #     self._event_filter = value
+
     def dragEnterEvent(self, e):
         print(f"drag id: {self.moved_widget_id}")
         # self.updateCursorPosition()
@@ -45,35 +57,33 @@ class NNSchemeWidget(QFrame):
 
     def dropEvent(self, e):
         position = e.pos()
+        # if self.event_filter.nn_scheme_moved_widget_id < 0: return
+        # widget = self.event_filter.nn_scheme_widgets[self.event_filter.nn_scheme_moved_widget_id]
 
         widget = self.widgets[self.moved_widget_id]
-        # new_point = QtCore.QPoint(position.x() - widget.drag_start_position.x(),
-        #                           position.y() - widget.drag_start_position.y())
-        new_point = QtCore.QPoint(position.x(),
-                                  position.y())
+        new_point = QtCore.QPoint(position.x() - widget.drag_start_position.x(),
+                                  position.y() - widget.drag_start_position.y())
         self.check_geometry(child_widget=new_point, nn_scheme=self, window=self.parent())
 
         widget.move(new_point)
         widget.show()
         widget.update()
+        # self.set_moved_widget_id_signal.emit(-1)
 
         print(f"drop id: {self.moved_widget_id}")
         self.moved_widget_id = None
         e.setDropAction(Qt.MoveAction)
         e.accept()
 
-    def mouseMoveEvent(self, event: QMouseEvent):
-        x = event.x()
-        y = event.y()
-        print(f"Cursor position: x={x}, y={y}")
+        # @pyqtSlot()
+        # def update_children(self, child: QWidget):
+        #     child.setParent(self)
+        #     if isinstance(child, ConnectionWidget):
+        #         child.set_paint_mode(True)
+        #         print(child.geometry())
+        #         print(self.geometry())
+        #         child.show()
 
-    def check_geometry(self, child_widget, nn_scheme, window):
-        child_geometry = child_widget
-        nn_scheme_geometry = nn_scheme.geometry()
-        window_geometry = window.geometry()
-        print("widget: ", child_geometry, '\n', "scheme: ", nn_scheme_geometry, '\n', "window: ", window_geometry, '\n')
-        # if not parent_geometry.contains(child_geometry):
-        #     print("Child widget is outside parent widget bounds")
 
     def created_widget(self, widget):
         widget.setParent(self)
@@ -84,21 +94,6 @@ class NNSchemeWidget(QFrame):
         print("set_moved_widget_id", widget_id)
         self.moved_widget_id = widget_id
 
-    # def update_widgets_holder(self, widget):
-    #     key = np.max(list(self.widgets.keys())) + 1 if self.widgets else 0
-    #     widget.widget_id = key
-    #     widget.setParent(self)
-    #     widget.cast_id_signal.connect(self.set_moved_widget_id)
-    #     widget.delete_widget_signal.connect(self.delete_widget_id)
-    #     self.widgets[key] = widget
-    #     self.set_moved_widget_id(key)
-    #     # self.moved_widget_id = key
-    #     print(f"widgets_ids: {self.widgets.keys()}")
-    #
-    # def delete_widget_id(self, widget_id):
-    #     print(f"delete: {widget_id}")
-    #     self.widgets[widget_id].close()
-    #     self.widgets.pop(widget_id)
 
 
 if __name__ == '__main__':

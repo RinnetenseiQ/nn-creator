@@ -1,14 +1,7 @@
-import sys
-
-from PyQt5.QtCore import QSize, pyqtSignal, QObject, QEvent
-from PyQt5.QtGui import QPaintEvent, QPainter, QPixmap
-from PyQt5.QtWidgets import QWidget, QApplication, QMainWindow, QGridLayout, QLabel, QFrame, QMenu
-from PyQt5 import QtCore, QtGui
-import PyQt5
-from PyQt5.QtCore import Qt
-from nn_creator.forms.widgets.nn_elements.base_class import BaseNNWidget
-from nn_creator.forms.widgets.test_frame import TestFrame
 from uuid import uuid4
+
+from PyQt5.QtGui import QPixmap
+from nn_creator.forms.widgets.base_classes import BaseNNWidget
 
 
 class AddWidget(BaseNNWidget):
@@ -39,15 +32,3 @@ class AddWidget(BaseNNWidget):
 
         self.cfg['inbound_nodes'] = [inbound]
 
-
-
-
-if __name__ == '__main__':
-    app = QApplication(sys.argv)
-    widget = AddWidget(position=(10, 10))
-    window = QMainWindow()
-    frame = TestFrame(widgets=[widget])
-    window.layout().addWidget(frame)
-    window.show()
-
-    sys.exit(app.exec_())

@@ -1,11 +1,10 @@
 import sys
-
-from PyQt5.QtGui import QPaintEvent, QPixmap
-from PyQt5.QtWidgets import QWidget, QApplication, QMainWindow
-from nn_creator.forms.utils.event_filters import GlobalEventFilter
-from nn_creator.forms.widgets.nn_elements.base_class import BaseNNWidget
-from nn_creator.forms.widgets.test_frame import TestFrame
 from uuid import uuid4
+
+from PyQt5.QtGui import QPixmap
+from PyQt5.QtWidgets import QApplication, QMainWindow
+from nn_creator.forms.widgets.base_classes import BaseNNWidget
+from nn_creator.forms.widgets.test_frame import TestFrame
 
 
 class DenseWidget(BaseNNWidget):
@@ -51,6 +50,12 @@ class DenseWidget(BaseNNWidget):
     def set_config(self, units, use_bias=True):
         self.cfg["config"]["units"] = units
         self.cfg["config"]["use_bias"] = use_bias
+
+    def mousePressEvent(self, event):
+        super(DenseWidget, self).mousePressEvent(event)
+        if self.is_connection_mode:
+            self.connect([self.parent().connection_mode_widget])
+
 
 
 if __name__ == '__main__':

@@ -53,6 +53,7 @@ class NNSchemeWidget(QFrame):
         position = e.pos()
         if self.event_filter.nn_scheme_moved_widget_id < 0: return
         widget = self.event_filter.nn_scheme_widgets[self.event_filter.nn_scheme_moved_widget_id]
+
         # widget = self.widgets[self.moved_widget_id]
         new_point = QtCore.QPoint(position.x() - widget.drag_start_position.x(),
                                   position.y() - widget.drag_start_position.y())

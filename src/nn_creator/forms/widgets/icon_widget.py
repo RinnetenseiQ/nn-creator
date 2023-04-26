@@ -16,8 +16,9 @@ class IconLabel(QWidget):
 
     create_widget_signal = pyqtSignal(BaseNNWidget)
 
-    def __init__(self, icon_pixmap, text, created_widget, parent=None, final_stretch=True):
+    def __init__(self, icon_pixmap, text, created_widget, parent=None, final_stretch=True, event_filter=None):
         super().__init__(parent)
+        self.event_filter = event_filter
         self.created_widget = created_widget
         layout = QHBoxLayout()
         layout.setContentsMargins(0, 0, 0, 0)
@@ -38,10 +39,11 @@ class IconLabel(QWidget):
         print("mouse move-----")
         # self.sender_signal.emit(self.widget_id)
         if event.buttons() == Qt.LeftButton:
-            widget = self.created_widget(parent=self.window())
+            widget: BaseNNWidget = self.created_widget(parent=self.window(), event_filter=self.event_filter)
             widget.hide()
             drag_pixmap = widget.pixmap
             self.create_widget_signal.emit(widget)
+            widget.connect_signal.connect(self.event_filter.add_end_connection_widget)
             mime_data = QtCore.QMimeData()
             drag = QtGui.QDrag(self)
             drag.setMimeData(mime_data)

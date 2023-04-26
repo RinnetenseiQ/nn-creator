@@ -21,6 +21,8 @@ class GlobalEventFilter2(QObject):
         self._last_nn_scheme_deleted_widget_id: int = -1
 
         self._nn_scheme_connections: dict = {}
+        self._nn_scheme_painted_connection_id = -1
+
 
     @property
     def nn_scheme_widgets(self):
@@ -47,6 +49,7 @@ class GlobalEventFilter2(QObject):
         widget.close()
         self._last_nn_scheme_deleted_widget_id = widget_id
 
+
     @property
     def nn_scheme_moved_widget_id(self):
         return self._nn_scheme_moved_widget_id
@@ -66,8 +69,20 @@ class GlobalEventFilter2(QObject):
         conn.delete_connection_signal.connect(self.delete_connection)
         self._nn_scheme_connections[key] = conn
 
+    def add_end_connection_widget(self, widget):
+        assert self.nn_scheme_painted_connection_id != -1
+        conn = self._nn_scheme_connections[self.nn_scheme_painted_connection_id]
+        conn.set_end_widget(widget)
+
     def delete_connection(self, connection_id: int):
         self._nn_scheme_connections.pop(connection_id)
+
+    @property
+    def nn_scheme_painted_connection_id(self):
+        return self._nn_scheme_painted_connection_id
+
+    def set_nn_scheme_painted_connection_id(self, connection_id: int):
+        self._nn_scheme_painted_connection_id = connection_id
 
     def eventFilter(self, obj, event):
         # print("Event Filter: sum event happend")
@@ -75,7 +90,13 @@ class GlobalEventFilter2(QObject):
             try:
                 if self.nn_scheme_widgets:
                     if self._last_nn_scheme_deleted_widget_id != self.nn_scheme_moved_widget_id and self.nn_scheme_moved_widget_id > -1:
-                        self.nn_scheme_widgets[self.nn_scheme_moved_widget_id].show()
+                        widget = self.nn_scheme_widgets[self.nn_scheme_moved_widget_id]
+                        widget.show()
+                        for conn in widget.input_connections:
+                            conn.update_widgets()
+
+                        for conn in widget.output_connections:
+                            conn.update_widgets()
             except KeyError as e:
                 print(e)
 

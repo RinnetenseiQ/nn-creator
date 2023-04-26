@@ -68,6 +68,7 @@ class GlobalEventFilter2(QObject):
         self.connection_create_signal.emit(conn)
         conn.delete_connection_signal.connect(self.delete_connection)
         self._nn_scheme_connections[key] = conn
+        self.set_nn_scheme_painted_connection_id(key)
 
     def add_end_connection_widget(self, widget):
         assert self.nn_scheme_painted_connection_id != -1
@@ -102,6 +103,30 @@ class GlobalEventFilter2(QObject):
 
             self._nn_scheme_moved_widget_id = -1
             print("Event Filter: Mouse Button Release")
+
+        if event.type() == QEvent.KeyRelease and event.key() == Qt.Key_Escape and not event.isAutoRepeat():
+            flag = event.isAccepted()
+            if not event.isAccepted():
+                print("Esc released")
+                if self._nn_scheme_painted_connection_id != -1:
+                    conn = self.nn_scheme_connections[self._nn_scheme_painted_connection_id]
+                    self.delete_connection(self._nn_scheme_painted_connection_id)
+                    conn.close()
+                    self.set_nn_scheme_painted_connection_id(-1)
+                    event.accept()
+                event.accept()
+            else:
+                event.ignore()
+            # if not flag:
+            #     print("Esc released")
+            #     if self._nn_scheme_painted_connection_id != -1:
+            #
+            #         conn = self.nn_scheme_connections[self._nn_scheme_painted_connection_id]
+            #         self.delete_connection(self._nn_scheme_painted_connection_id)
+            #         conn.close()
+            #         self.set_nn_scheme_painted_connection_id(-1)
+            #         event.accept()
+
 
         return super().eventFilter(obj, event)
 

@@ -1,8 +1,9 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QWidget, QMainWindow, QFrame, QPushButton
-from PyQt5.QtGui import QPainter, QPen, QCursor, QPainterPath
-from PyQt5.QtCore import Qt, QPoint, pyqtSignal, QRect
+
 import numpy as np
+from PyQt5.QtCore import Qt, QPoint, pyqtSignal, QRect
+from PyQt5.QtGui import QPainter, QPen, QPainterPath
+from PyQt5.QtWidgets import QApplication, QWidget, QMainWindow, QFrame, QPushButton
 
 
 def get_coordinates(base_vector_start, base_vector_end, angle_degree, vector_len):
@@ -185,13 +186,25 @@ class ConnectionWidget(QWidget):
             pos = event.pos()
             for widget in self.event_filter.nn_scheme_widgets.values():
                 geom: QRect = widget.geometry()
+                # if geom.contains(pos) and type(widget) != InputWidget:
                 if geom.contains(pos):
                     self.set_paint_mode(False)
                     self.set_end_widget(widget)
                     widget.input_connections.append(self)
+                    break
 
                 widget.raise_()
         print("connection press event")
+
+    def close(self) -> bool:
+        if self in self.start_widget.output_connections:
+            self.start_widget.output_connections.remove(self)
+
+        if self in self.start_widget.output_connections:
+            self.end_widget.input_connections.remove(self)
+
+        return super(ConnectionWidget, self).close()
+
 
     # def
 

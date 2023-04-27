@@ -3,7 +3,7 @@ from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QFileDialog, QMainWindow, QTreeWidgetItem, QTreeWidget
 from nn_creator.forms.from_ui.ProjectWindow_parent import Ui_ProjectEditorWindow
-from nn_creator.forms.utils.event_filters import GlobalEventFilter2
+from nn_creator.forms.utils.event_filters import GlobalEventFilter2, GlobalEventFilter
 from nn_creator.forms.widgets.icon_widget import IconLabel
 from nn_creator.forms.widgets.nn_scheme import NNSchemeWidget
 from nn_creator.forms.widgets.pandas_model import PandasModel
@@ -11,6 +11,8 @@ import nn_creator.forms.widgets.nn_elements as nn_widgets
 from nn_creator.forms.widgets.base_classes import BaseNNWidget
 
 from nn_creator.forms.widgets.nn_property import NNPropertyWidget
+from nn_creator.forms.utils.widget_holder import WidgetHolder
+
 import numpy as np
 
 non_trainable_widgets = [nn_widgets.InputWidget,
@@ -33,7 +35,7 @@ trainable_widgets_icons = [
 class ProjectEditorWindow(QMainWindow, Ui_ProjectEditorWindow):
     update_event_filter_signal = pyqtSignal(BaseNNWidget)
 
-    def __init__(self, path, event_filter: GlobalEventFilter2 = None):
+    def __init__(self, path, event_filter: GlobalEventFilter = None):
         super().__init__()
         # self.event_filter = event_filter
         self.widget_holder = None
@@ -64,7 +66,7 @@ class ProjectEditorWindow(QMainWindow, Ui_ProjectEditorWindow):
 
         a.setFixedSize(self.scrollArea.size())
         self.scrollArea = a
-        self.event_filter.connection_create_signal.connect(self.scrollArea.update_children)
+        # self.event_filter.connection_create_signal.connect(self.scrollArea.update_children)
         trainable_group_item = self.model_blocks_TW.topLevelItem(0)
         trainable_group_item.setExpanded(True)
         non_trainable_group_item = self.model_blocks_TW.topLevelItem(1)
@@ -131,3 +133,5 @@ class ProjectEditorWindow(QMainWindow, Ui_ProjectEditorWindow):
             raise NotImplementedError()
 
         self.dataset_path_LE.setText(path[0])
+
+

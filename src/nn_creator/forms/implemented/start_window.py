@@ -49,7 +49,7 @@ if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
     app.setStyle('Fusion')
 
-    event_filter = GlobalEventFilter2()
+    event_filter = GlobalEventFilter()
     app.installEventFilter(event_filter)
 
     capture_window = NNCreatorStartWindow(event_filter=event_filter)

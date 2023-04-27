@@ -1,25 +1,20 @@
 import sys
 
-import numpy as np
 from PyQt5 import QtCore
-from PyQt5.QtCore import Qt, QObject, pyqtSlot, pyqtSignal
-from PyQt5.QtGui import QMouseEvent
-from PyQt5.QtWidgets import QApplication, QMainWindow, QFrame, QWidget
-from nn_creator.forms.utils.event_filters import GlobalEventFilter2
-from nn_creator.forms.widgets.base_classes import BaseNNWidget
-from nn_creator.forms.widgets.tests.connection import ConnectionWidget
+from PyQt5.QtCore import Qt, pyqtSignal
+from PyQt5.QtWidgets import QApplication, QMainWindow, QFrame
 
 
-class CursorPos(QObject):
-    def __init__(self, window):
-        super().__init__()
-        self.window = window
-
-    def run(self):
-        pos = self.window.mapFromGlobal(self.cursor().pos())
-        x = pos.x()
-        y = pos.y()
-        print(f"Cursor position: x={x}, y={y}")
+# class CursorPos(QObject):
+#     def __init__(self, window):
+#         super().__init__()
+#         self.window = window
+#
+#     def run(self):
+#         pos = self.window.mapFromGlobal(self.cursor().pos())
+#         x = pos.x()
+#         y = pos.y()
+#         print(f"Cursor position: x={x}, y={y}")
 
 
 class NNSchemeWidget(QFrame):
@@ -63,7 +58,6 @@ class NNSchemeWidget(QFrame):
         widget = self.widgets[self.moved_widget_id]
         new_point = QtCore.QPoint(position.x() - widget.drag_start_position.x(),
                                   position.y() - widget.drag_start_position.y())
-        self.check_geometry(child_widget=new_point, nn_scheme=self, window=self.parent())
 
         widget.move(new_point)
         widget.show()

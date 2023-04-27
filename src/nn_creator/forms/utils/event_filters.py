@@ -89,6 +89,7 @@ class GlobalEventFilter2(QObject):
 
 class GlobalEventFilter(QObject):
     connection_mode_signal = pyqtSignal(bool)
+    connection_create_signal = pyqtSignal(ConnectionWidget)
 
     def __init__(self, widgets=None):
         super().__init__()
@@ -96,6 +97,8 @@ class GlobalEventFilter(QObject):
         self.widgets = widgets if widgets else {}
         self.moved_widget_id = None
 
+        self._nn_scheme_widgets: dict = {}
+        self._nn_scheme_connections: dict = {}
     def eventFilter(self, obj, event):
         # print("Event Filter: sum event happend")
         try:
@@ -112,7 +115,6 @@ class GlobalEventFilter(QObject):
             if type(obj) == NNSchemeWidget:
                 print("This is NNSchemeWidget")
 
-
         return super().eventFilter(obj, event)
 
     def set_widget_holder(self, widget_holder):
@@ -125,5 +127,19 @@ class GlobalEventFilter(QObject):
 
     def set_moved_widget_id(self, widget_id):
         self.moved_widget_id = widget_id
+
+    # @property
+    # def nn_scheme_connections(self):
+    #     return self._nn_scheme_connections
+    #
+    # def add_connection(self, conn):
+    #     key = np.max(list(self._nn_scheme_widgets.keys())) + 1 if self._nn_scheme_widgets else 1
+    #     conn.connection_id = key
+    #     self.connection_create_signal.emit(conn)
+    #     conn.delete_connection_signal.connect(self.delete_connection)
+    #     self._nn_scheme_connections[key] = conn
+    #
+    # def delete_connection(self, connection_id: int):
+    #     self._nn_scheme_connections.pop(connection_id)
 
 

@@ -158,7 +158,9 @@ if __name__ == '__main__':
     button2.setStyleSheet("background-color:blue;")
     button2.move(300, 300)
 
-    widget = ConnectionWidget(start_widget=button, end_widget=button2, parent=frame)
+    widget = ConnectionWidget(start_widget=button,
+                              # end_widget=button2,
+                              parent=frame)
     # widget.setStyleSheet("background-color:blue;")
     window.layout().addWidget(frame)
     window.show()

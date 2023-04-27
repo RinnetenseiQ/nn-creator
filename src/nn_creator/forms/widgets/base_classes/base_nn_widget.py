@@ -8,6 +8,8 @@ import PyQt5
 from PyQt5.QtCore import Qt
 from abc import abstractmethod
 
+from nn_creator.forms.widgets.tests.connection import ConnectionWidget
+
 
 class BaseNNWidget(QWidget):
     delete_widget_signal = pyqtSignal(int)

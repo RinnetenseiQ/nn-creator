@@ -13,7 +13,6 @@ from nn_creator.forms.widgets.base_classes import BaseNNWidget
 class IconLabel(QWidget):
     IconSize = QSize(28, 28)
     HorizontalSpacing = 2
-
     create_widget_signal = pyqtSignal(BaseNNWidget)
 
     def __init__(self, icon_pixmap, text, created_widget, parent=None, final_stretch=True):

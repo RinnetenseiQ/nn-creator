@@ -12,6 +12,7 @@ class BaseNNWidget(QWidget):
     cast_id_signal = pyqtSignal(int)
     connection_create_signal = pyqtSignal(ConnectionWidget)
     connect_signal = pyqtSignal(QWidget)
+    mouse_press_signal = pyqtSignal(int)
 
     def __init__(self, pixmap, parent=None, widget_id=None, event_filter=None, position=(0, 0), size=(30, 30)):
         self.event_filter = event_filter
@@ -54,6 +55,7 @@ class BaseNNWidget(QWidget):
 
     def mousePressEvent(self, event):
         print("base class mouse press")
+        self.mouse_press_signal.emit(self.widget_id)
         if event.button() == Qt.LeftButton:
             # Запоминаем позицию относительно виджета
             self.drag_start_position = event.pos()

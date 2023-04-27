@@ -24,7 +24,7 @@ class EditWidget(QLineEdit):
 class NNPropertyWidget(QTreeWidget):
     def __init__(self, parent=None, event_filter: GlobalEventFilter2 = None):
         super().__init__(parent=parent)
-        self.event_filter = event_filter
+        self._event_filter = event_filter
         # self.setObjectName("property_area")
         # self.setFixedSize(300, 300)
         # self.setAcceptDrops(True)
@@ -37,6 +37,15 @@ class NNPropertyWidget(QTreeWidget):
         # self.setDragEnabled(True)
         self.update()
 
+    @property
+    def event_filter(self):
+        return self._event_filter
+
+    @event_filter.setter
+    def event_filter(self, value: GlobalEventFilter2):
+        self._event_filter = value
+
+    # TODO: add checker for data type
     def display_properties(self, widget_id):
         widget = self.event_filter.nn_scheme_widgets[widget_id]
         self.clear()
@@ -77,4 +86,5 @@ class NNPropertyWidget(QTreeWidget):
         print('update:', key[0], value[0])
 
     def created_widget(self, widget):
+        print('created_widget---')
         widget.mouse_press_signal.connect(self.display_properties)

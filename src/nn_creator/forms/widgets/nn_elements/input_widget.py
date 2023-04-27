@@ -13,10 +13,11 @@ class InputWidget(BaseNNWidget):
                  parent=None,
                  input_shape=None,
                  widget_id=None,
-                 position=None):
+                 position=None,
+                 event_filter=None):
         widget_size = (120, 60)
         pixmap = QPixmap("data/resources/nn_elements/input.png")
-        super().__init__(parent=parent, pixmap=pixmap, widget_id=widget_id, position=position, size=widget_size)
+        super().__init__(parent=parent, pixmap=pixmap, widget_id=widget_id, position=position, size=widget_size, event_filter=event_filter)
         self.setFixedSize(*widget_size)
 
         shape = (None, *input_shape) if input_shape else (None, None)

@@ -9,10 +9,11 @@ class ActivationWidget(BaseNNWidget):
     def __init__(self,
                  parent=None,
                  widget_id=None,
-                 position=None):
+                 position=None,
+                 event_filter=None):
         widget_size = (125, 65)
         pixmap = QPixmap("data/resources/nn_elements/activation.png")
-        super().__init__(parent=parent, pixmap=pixmap, widget_id=widget_id, position=position, size=widget_size)
+        super().__init__(parent=parent, pixmap=pixmap, widget_id=widget_id, position=position, size=widget_size, event_filter=event_filter)
         self.setFixedSize(*widget_size)
 
         name = "activation_{}".format(uuid4())

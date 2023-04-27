@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1572</width>
-    <height>799</height>
+    <width>1525</width>
+    <height>793</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,8 +17,8 @@
    <widget class="QTabWidget" name="tabWidget">
     <property name="geometry">
      <rect>
-      <x>10</x>
-      <y>20</y>
+      <x>40</x>
+      <y>0</y>
       <width>1471</width>
       <height>741</height>
      </rect>
@@ -187,7 +187,7 @@
         <height>691</height>
        </rect>
       </property>
-      <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="3,10,0">
+      <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="3,10,3">
        <item>
         <widget class="QTreeWidget" name="model_blocks_TW">
          <attribute name="headerCascadingSectionResizes">
@@ -235,8 +235,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>899</width>
-             <height>689</height>
+             <width>897</width>
+             <height>687</height>
             </rect>
            </property>
           </widget>
@@ -244,17 +244,28 @@
         </widget>
        </item>
        <item>
-        <widget class="QTreeWidget" name="model_properties_TW">
-         <column>
-          <property name="text">
-           <string notr="true">Property</string>
+        <widget class="QFrame" name="frame_5">
+         <property name="frameShape">
+          <enum>QFrame::StyledPanel</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Raised</enum>
+         </property>
+         <widget class="QTreeWidget" name="model_properties_TW">
+          <property name="geometry">
+           <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>261</width>
+            <height>681</height>
+           </rect>
           </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>Value</string>
-          </property>
-         </column>
+          <column>
+           <property name="text">
+            <string notr="true">1</string>
+           </property>
+          </column>
+         </widget>
         </widget>
        </item>
       </layout>
@@ -277,8 +288,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1572</width>
-     <height>26</height>
+     <width>1525</width>
+     <height>25</height>
     </rect>
    </property>
   </widget>

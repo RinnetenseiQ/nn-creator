@@ -1,8 +1,9 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QWidget, QMainWindow, QFrame, QPushButton
-from PyQt5.QtGui import QPainter, QPen, QCursor, QPainterPath
-from PyQt5.QtCore import Qt, QPoint, pyqtSignal
+
 import numpy as np
+from PyQt5.QtCore import Qt, QPoint, pyqtSignal, QRect
+from PyQt5.QtGui import QPainter, QPen, QPainterPath
+from PyQt5.QtWidgets import QApplication, QWidget, QMainWindow, QFrame, QPushButton
 
 
 def get_coordinates(base_vector_start, base_vector_end, angle_degree, vector_len):
@@ -30,9 +31,10 @@ def get_coordinates(base_vector_start, base_vector_end, angle_degree, vector_len
 class ConnectionWidget(QWidget):
     delete_connection_signal = pyqtSignal(int)
 
-    def __init__(self, start_widget: QWidget = None, end_widget: QWidget = None, parent=None, connection_id=None):
+    def __init__(self, start_widget: QWidget = None, end_widget: QWidget = None, parent=None, connection_id=None, event_filter=None):
         super().__init__(parent)
         # self.current_pos = None
+        self.event_filter = event_filter
         self.end_widget = end_widget
         self.start_widget = start_widget
         if self.parent():
@@ -53,7 +55,7 @@ class ConnectionWidget(QWidget):
 
         self.is_paint_mode = False if start_widget and end_widget else True
         self.setMouseTracking(self.is_paint_mode)
-        self.update()
+        # self.update()
 
     def setParent(self, parent: QWidget) -> None:
         super(ConnectionWidget, self).setParent(parent)
@@ -69,6 +71,34 @@ class ConnectionWidget(QWidget):
     def set_start_point(self, point: QPoint):
         self.start_x = point.x()
         self.start_y = point.y()
+
+    # def update(self) -> None:
+    #     x = self.cursor().pos().x()
+    #     y = self.cursor().pos().y()
+    #
+    #     self.start_x = self.start_widget.x() + self.start_widget.width() / 2 if self.start_widget else x
+    #     self.start_y = self.start_widget.y() + self.start_widget.height() if self.start_widget else y
+    #
+    #     self.end_x = self.end_widget.x() + self.end_widget.width() / 2 if self.end_widget else x
+    #     self.end_y = self.end_widget.y() if self.end_widget else y
+    #
+    #     self.calculate_mid_points()
+    #
+    #     super(ConnectionWidget, self).update()
+
+    def set_start_widget(self, widget):
+        self.start_widget = widget
+        self.start_x = self.start_widget.x() + self.start_widget.width() / 2
+        self.start_y = self.start_widget.y() + self.start_widget.height()
+        self.calculate_mid_points()
+        self.update()
+
+    def set_end_widget(self, widget):
+        self.end_widget = widget
+        self.end_x = self.end_widget.x() + self.end_widget.width() / 2
+        self.end_y = self.end_widget.y()
+        self.calculate_mid_points()
+        self.update()
 
     def calculate_mid_points(self):
 
@@ -93,7 +123,19 @@ class ConnectionWidget(QWidget):
         self.end_x = point.x()
         self.end_y = point.y()
 
+    def update_widgets(self):
+        self.start_x = self.start_widget.x() + self.start_widget.width() / 2
+        self.start_y = self.start_widget.y() + self.start_widget.height()
+
+        self.end_x = self.end_widget.x() + self.end_widget.width() / 2
+        self.end_y = self.end_widget.y()
+        self.calculate_mid_points()
+        self.is_paint_mode = True
+        self.update()
+        self.is_paint_mode = False
+
     def paintEvent(self, event):
+        # if self.is_paint_mode:
         painter = QPainter()
         painter.begin(self)
 
@@ -129,7 +171,7 @@ class ConnectionWidget(QWidget):
         #                      self.current_pos.x(), self.current_pos.y())
 
     def mouseMoveEvent(self, event):
-        print("connection move event")
+        # print("connection move event")
         if self.is_paint_mode:
             if self.is_end_moved:
                 self.end_x = event.pos().x()
@@ -138,6 +180,30 @@ class ConnectionWidget(QWidget):
                 self.start_x = event.pos().x()
                 self.start_y = event.pos().y()
             self.update()
+
+    def mousePressEvent(self, event) -> None:
+        if self.is_paint_mode:
+            pos = event.pos()
+            for widget in self.event_filter.nn_scheme_widgets.values():
+                geom: QRect = widget.geometry()
+                # if geom.contains(pos) and type(widget) != InputWidget:
+                if geom.contains(pos):
+                    self.set_paint_mode(False)
+                    self.set_end_widget(widget)
+                    self.event_filter._nn_scheme_painted_connection_id = -1
+                    widget.input_connections.append(self)
+                widget.raise_()
+        print("connection press event")
+
+    def close(self) -> bool:
+        if self in self.start_widget.output_connections:
+            self.start_widget.output_connections.remove(self)
+
+        if self in self.start_widget.output_connections:
+            self.end_widget.input_connections.remove(self)
+
+        return super(ConnectionWidget, self).close()
+
 
     # def
 

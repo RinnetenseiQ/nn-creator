@@ -1,23 +1,20 @@
-import sys
-
-from PyQt5.QtCore import QSize, pyqtSignal, QObject, QEvent, QPoint
-from PyQt5.QtGui import QPaintEvent, QPainter, QPixmap
-from PyQt5.QtWidgets import QWidget, QApplication, QMainWindow, QGridLayout, QLabel, QFrame, QMenu
-from PyQt5 import QtCore, QtGui
-import PyQt5
-from PyQt5.QtCore import Qt
 from abc import abstractmethod
 
+from PyQt5 import QtCore, QtGui
+from PyQt5.QtCore import QSize, pyqtSignal, QPoint, Qt
+from PyQt5.QtGui import QPaintEvent, QPainter
+from PyQt5.QtWidgets import QWidget, QMenu
 from nn_creator.forms.widgets.tests.connection import ConnectionWidget
 
 
 class BaseNNWidget(QWidget):
     delete_widget_signal = pyqtSignal(int)
     cast_id_signal = pyqtSignal(int)
-    mouse_press_signal = pyqtSignal(int)
     connection_create_signal = pyqtSignal(ConnectionWidget)
+    connect_signal = pyqtSignal(QWidget)
 
-    def __init__(self, pixmap, parent=None, widget_id=None, position=(0, 0), size=(30, 30)):
+    def __init__(self, pixmap, parent=None, widget_id=None, event_filter=None, position=(0, 0), size=(30, 30)):
+        self.event_filter = event_filter
         self.cfg = None
         super().__init__(parent=parent)
         self.is_connection_mode = False
@@ -50,17 +47,21 @@ class BaseNNWidget(QWidget):
         return self._pixmap
 
     def paintEvent(self, event: QPaintEvent) -> None:
-        print("paint")
+        # print("paint")
         painter = QPainter(self)
         painter.drawPixmap(self.rect(), self._pixmap)
         painter.end()
 
     def mousePressEvent(self, event):
-        print("mouse press")
+        print("base class mouse press")
         if event.button() == Qt.LeftButton:
             # Запоминаем позицию относительно виджета
             self.drag_start_position = event.pos()
-            self.mouse_press_signal.emit(self.widget_id)
+
+        if self.event_filter.nn_scheme_painted_connection_id != -1:
+            self.connect_signal.emit(self)
+            self.event_filter._nn_scheme_painted_connection_id = -1
+
 
     def mouseMoveEvent(self, event):
         print("mouse move-")
@@ -106,9 +107,10 @@ class BaseNNWidget(QWidget):
         elif action == connect_action:
             conn = ConnectionWidget(start_widget=self,
                                     # parent=self.window()
+                                    event_filter=self.event_filter
                                     )
             self.connection_create_signal.emit(conn)
-            # self.output_connections.append(conn)
+            self.output_connections.append(conn)
 
 
 

@@ -41,3 +41,21 @@ layers_icons = {"Example Theme": {"activation": "icons8-curve-64.png",
                                   "zero_padding": ""
 
                                   }}
+
+func_activations = ['elu',
+                    'exponential',
+                    'gelu',
+                    'hard_sigmoid',
+                    'linear',
+                    'relu',
+                    'selu',
+                    'sigmoid',
+                    'softmax',
+                    'softplus',
+                    'softsign',
+                    'swish',
+                    'tanh']
+
+immutable_fields = ['name',
+                    'dtype',
+                    'batch_input_shape']

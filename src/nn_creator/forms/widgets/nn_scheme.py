@@ -10,18 +10,6 @@ from nn_creator.forms.widgets.base_classes import BaseNNWidget
 from nn_creator.forms.widgets.tests.connection import ConnectionWidget
 
 
-class CursorPos(QObject):
-    def __init__(self, window):
-        super().__init__()
-        self.window = window
-
-    def run(self):
-        pos = self.window.mapFromGlobal(self.cursor().pos())
-        x = pos.x()
-        y = pos.y()
-        print(f"Cursor position: x={x}, y={y}")
-
-
 class NNSchemeWidget(QFrame):
     set_moved_widget_id_signal = pyqtSignal(int)
 
@@ -77,6 +65,16 @@ class NNSchemeWidget(QFrame):
 
         # child.show()
 
+class CursorPos(QObject):
+    def __init__(self, window):
+        super().__init__()
+        self.window = window
+
+    def run(self):
+        pos = self.window.mapFromGlobal(self.cursor().pos())
+        x = pos.x()
+        y = pos.y()
+        print(f"Cursor position: x={x}, y={y}")
 
 
 

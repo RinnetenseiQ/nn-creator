@@ -1,80 +1,185 @@
 from PyQt5.QtCore import pyqtSignal
-from PyQt5.QtWidgets import QTreeWidget, QTreeWidgetItem, QLineEdit
+from PyQt5.QtGui import QColor, QPalette
+from PyQt5.QtWidgets import (QTreeWidget, QTreeWidgetItem, QLineEdit,
+                             QComboBox, QSpinBox, QStyledItemDelegate, QStyle)
 from nn_creator.forms.utils.event_filters import GlobalEventFilter2
+from nn_creator.forms.styles.colors import (DEFAULT_BLACK, DEFAULT_WHITE, NN_PROPERTY_BACKGROUND,
+                                            NN_PROPERTY_BACKGROUND_CHILD_ODD, NN_PROPERTY_BACKGROUND_CHILD_EVEN)
 
 
-class EditWidget(QLineEdit):
+class LineEditWidget(QLineEdit):
     update_config_signal = pyqtSignal(dict)
 
-    def __init__(self, data, parent=None, prop_name: str = None):
+    def __init__(self,
+                 parent=None,
+                 widget_id: int = None,
+                 data=None,
+                 prop_name: str = None,
+                 color: tuple = DEFAULT_WHITE):
         super().__init__(parent)
+        self.widget_id = widget_id
         self.prop_name = prop_name
         self.data = data
-        # Создаем поле ввода для редактирования данных
-        self.setText(data)
+        self.setStyleSheet(f"background-color: rgb{color};")
+        self.setText(self.data)
         self.editingFinished.connect(self.update_data)
 
     def update_data(self):
-        # Обновляем данные при изменении поля ввода
         self.data = self.text()
-        # print(f'update_data:{self.data}')
-        self.update_config_signal.emit({self.prop_name: self.data})
+        self.update_config_signal.emit({'prop_name': self.prop_name,
+                                        'value': self.data,
+                                        'widget_id': self.widget_id})
+
+# class LineEditWidgetTuple(QLineEdit):
+#     update_config_signal = pyqtSignal(dict)
+#
+#         def __init__(self,
+#                  parent=None,
+#                  widget_id: int = None,
+#                  value=None,
+#                  prop_name: str = None,
+#                  color: tuple = DEFAULT_WHITE):
+#         super().__init__(parent)
+#         self.widget_id = widget_id
+#         self.prop_name = prop_name
+#         self.value = value
+#         self.setStyleSheet(f"background-color: rgb{color};")
+#         self.setText(self.data)
+#         self.editingFinished.connect(self.update_data)
+#
+#             def update_data(self):
+#         self.value = self.value()
+#         self.update_config_signal.emit({'prop_name': self.prop_name,
+#                                         'data': self.data,
+#                                         'widget_id': self.widget_id})
+# работает как нужно
+class ComboBoxDelegate(QStyledItemDelegate):
+    def paint(self, painter, option, index):
+        # if option.state & QStyle.State_MouseOver:
+        #     # Определяем цвет фона для элемента при наведении на него мышью
+        #     background_color = QColor(255,255,255)
+        # else:
+        #     background_color = QColor(255,255,255)
+        #
+        # # Рисуем фон элемента
+        # palette = QPalette()
+        # palette.setColor(QPalette.Base, background_color)
+        # option.palette = palette
+        super().paint(painter, option, index)
+class ComboBoxWidget(QComboBox):
+    update_config_signal = pyqtSignal(dict)
+
+    def __init__(self,
+                 parent=None,
+                 widget_id: int = None,
+                 data=None,
+                 prop_name: str = None,
+                 color: tuple = DEFAULT_WHITE):
+        super().__init__(parent)
+        self.widget_id = widget_id
+        self.prop_name = prop_name
+        self.data = data
+        self.setStyleSheet(f"background-color: rgb{color};")
+
+        self.setItemDelegate(ComboBoxDelegate())
+        self.addItems(['True', 'False'])
+        self.setCurrentIndex(0 if self.data else 1)
+        self.currentTextChanged.connect(self.update_data)
+
+    def update_data(self):
+        self.data = self.currentText()
+        self.update_config_signal.emit({'prop_name': self.prop_name,
+                                        'value': True if self.data == 'True' else False,
+                                        'widget_id': self.widget_id})
+
+class SpinBoxWidgetInt(QSpinBox):
+    update_config_signal = pyqtSignal(dict)
+
+    def __init__(self,
+                 parent=None,
+                 widget_id: int = None,
+                 data=None,
+                 prop_name: str = None,
+                 color: tuple = DEFAULT_WHITE):
+        super().__init__(parent)
+        self.widget_id = widget_id
+        self.prop_name = prop_name
+        self.data = data
+        self.setStyleSheet(f"background-color: rgb{color};")
+        self.setMinimum(0)
+        self.setMaximum(9999999)
+        self.setValue(self.data)
+        self.valueChanged.connect(self.update_data)
+
+    def update_data(self):
+        self.data = self.value()
+        self.update_config_signal.emit({'prop_name': self.prop_name,
+                                        'value': self.data,
+                                        'widget_id': self.widget_id})
 
 
 class NNPropertyWidget(QTreeWidget):
     def __init__(self, parent=None, event_filter: GlobalEventFilter2 = None):
         super().__init__(parent=parent)
-        self.event_filter = event_filter
-        # self.setObjectName("property_area")
-        # self.setFixedSize(300, 300)
-        # self.setAcceptDrops(True)
+        self._event_filter = event_filter
         self.setHeaderLabels(['Property', "Value"])
         self.setStyleSheet("padding:0; margin:0;")
         self.moved_widget_id = None
-        self.setStyleSheet("background-color:green;")
-        # self.update()
+        self.setStyleSheet(f"background-color: rgb{NN_PROPERTY_BACKGROUND};")
         self.property_items = {}
-        # self.setDragEnabled(True)
         self.update()
 
+    @property
+    def event_filter(self):
+        return self._event_filter
+
+    @event_filter.setter
+    def event_filter(self, value: GlobalEventFilter2):
+        self._event_filter = value
+
+    # TODO: add tuple checker for data type
+    # TODO: maybe "acivation" move to combo box?
     def display_properties(self, widget_id):
         widget = self.event_filter.nn_scheme_widgets[widget_id]
         self.clear()
-        # combo = QComboBox()
-        # combo.addItems(["Option 1", "Option 2", "Option 3"])
-        # combo.setCurrentIndex(0)
-        #
-        # self.combo = QLineEdit('dfghjk')
-        # self.combo.editingFinished.connect(self.update_data)
-
         self.addTopLevelItem(QTreeWidgetItem(['Widget', widget.cfg['class_name']]))
-
-        # area_about_widget = self.topLevelItem(0)
-        # temp = QTreeWidgetItem(area_about_widget)
-        # area_about_widget.addChild(temp)
-        #
-        # temp.setText(0, 'gggg')
-        # self.setItemWidget(temp, 1, self.combo)
-        # temp.setBackground(1, QColor(255, 0, 0))
-
+        cou = 0
         for key, value in widget.cfg['config'].items():
-            line_edit = EditWidget(parent=self, data=str(value), prop_name=key)
-            line_edit.update_config_signal.connect(self.display_updates)
-            area_about_widget = self.topLevelItem(0)
-            temp = QTreeWidgetItem(area_about_widget)
-            area_about_widget.addChild(temp)
-            temp.setText(0, key)
-            self.setItemWidget(temp, 1, line_edit)
-
-            # area_about_widget = self.topLevelItem(0)
-            # area_about_widget.addChild(QTreeWidgetItem(['ddd']))
+            cou += 1
+            # print('type:', type(value))
+            #TODO: can make a bool with a checkbox?
+            if isinstance(value, bool):
+                self._create_subwidget(widget_id, ComboBoxWidget, key, value, cou)
+            elif isinstance(value, int):
+                self._create_subwidget(widget_id, SpinBoxWidgetInt, key, value, cou)
+            # elif isinstance(value, (tuple, list, set)):
+            #     self._create_widget(LineEditWidgetTuple, key, value, cou)
+            elif isinstance(value, str):
+                self._create_subwidget(widget_id, LineEditWidget, key, value, cou)
 
         self.update()
 
-    def display_updates(self, data):
-        key = list(data.keys())
-        value = list(data.values())
-        print('update:', key[0], value[0])
+    def _create_subwidget(self, widget_id, cur_class, key, value, cou):
+        color = NN_PROPERTY_BACKGROUND_CHILD_EVEN if cou % 2 == 0 else NN_PROPERTY_BACKGROUND_CHILD_ODD
+        widget_type = cur_class(parent=self, widget_id=widget_id, data=value, prop_name=key, color=color)
+        widget_type.update_config_signal.connect(self.display_updates)
+        area_for_widget = self.topLevelItem(0)
+        area_for_widget.setExpanded(True)
+        temp = QTreeWidgetItem(area_for_widget)
+        area_for_widget.addChild(temp)
+        temp.setBackground(0, QColor(*color))
+        temp.setText(0, key)
+        self.setItemWidget(temp, 1, widget_type)
+
+    def display_updates(self, info):
+        prop_name = info['prop_name']
+        value = info['value']
+        widget_id = info['widget_id']
+        print('update:', widget_id, prop_name, value, type(value))
+        widget = self.event_filter.nn_scheme_widgets[widget_id]
+        widget.cfg['config'][prop_name] = value
+        print(widget.cfg['config'][prop_name], type(widget.cfg['config'][prop_name]))
 
     def created_widget(self, widget):
+        print('created_widget---')
         widget.mouse_press_signal.connect(self.display_properties)

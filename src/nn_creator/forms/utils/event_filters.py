@@ -42,7 +42,7 @@ class GlobalEventFilter2(QObject):
 
     # @pyqtSlot()
     def delete_nn_scheme_widget(self, widget_id: int):
-        print(f"delete: {widget_id}")
+        # print(f"delete: {widget_id}")
         widget: QWidget = self.nn_scheme_widgets[widget_id]
         self.nn_scheme_widgets.pop(widget_id)
         widget.setParent(None)
@@ -102,7 +102,31 @@ class GlobalEventFilter2(QObject):
                 print(e)
 
             self._nn_scheme_moved_widget_id = -1
-            print("Event Filter: Mouse Button Release")
+            # print("Event Filter: Mouse Button Release")
+
+        if event.type() == QEvent.KeyRelease and event.key() == Qt.Key_Escape and not event.isAutoRepeat():
+            flag = event.isAccepted()
+            if not event.isAccepted():
+                print("Esc released")
+                if self._nn_scheme_painted_connection_id != -1:
+                    conn = self.nn_scheme_connections[self._nn_scheme_painted_connection_id]
+                    self.delete_connection(self._nn_scheme_painted_connection_id)
+                    conn.close()
+                    self.set_nn_scheme_painted_connection_id(-1)
+                    event.accept()
+                event.accept()
+            else:
+                event.ignore()
+
+            # print("Esc released")
+            # if self._nn_scheme_painted_connection_id != -1:
+            #
+            #     conn = self.nn_scheme_connections[self._nn_scheme_painted_connection_id]
+            #     self.delete_connection(self._nn_scheme_painted_connection_id)
+            #     conn.close()
+            #     self.set_nn_scheme_painted_connection_id(-1)
+            #     event.accept()
+
 
         if event.type() == QEvent.KeyRelease and event.key() == Qt.Key_Escape and not event.isAutoRepeat():
             flag = event.isAccepted()
@@ -144,7 +168,7 @@ class GlobalEventFilter(QObject):
         if event.type() == QEvent.MouseButtonRelease:
             if self.widgets:
                 self.widgets[self.moved_widget_id].show()
-            print("Event Filter: Mouse Button Release")
+            # print("Event Filter: Mouse Button Release")
 
         return super().eventFilter(obj, event)
 
@@ -160,8 +184,8 @@ class GlobalEventFilter(QObject):
         self.widgets[key] = widget
         self.set_moved_widget_id(key)
         # self.moved_widget_id = key
-        print(f"event filter widgets_ids: {self.widgets.keys()}")
+        # print(f"event filter widgets_ids: {self.widgets.keys()}")
 
     def delete_widget_id(self, widget_id):
-        print(f"delete: {widget_id}")
+        # print(f"delete: {widget_id}")
         self.widgets.pop(widget_id)

@@ -3,12 +3,14 @@ from PyQt5.QtGui import QColor, QPalette
 from PyQt5.QtWidgets import (QTreeWidget, QTreeWidgetItem, QLineEdit,
                              QComboBox, QSpinBox, QStyledItemDelegate, QStyle)
 from nn_creator.forms.utils.event_filters import GlobalEventFilter2
+from nn_creator.forms.styles.colors import (DEFAULT_BLACK, DEFAULT_WHITE, NN_PROPERTY_BACKGROUND,
+                                            NN_PROPERTY_BACKGROUND_CHILD_ODD, NN_PROPERTY_BACKGROUND_CHILD_EVEN)
 
 
 class LineEditWidget(QLineEdit):
     update_config_signal = pyqtSignal(dict)
 
-    def __init__(self, data, parent=None, prop_name: str = None, color: tuple = (255, 255, 255)):
+    def __init__(self, data, parent=None, prop_name: str = None, color: tuple = DEFAULT_WHITE):
         super().__init__(parent)
         self.prop_name = prop_name
         self.data = data
@@ -24,7 +26,7 @@ class LineEditWidget(QLineEdit):
 # class LineEditWidgetTuple(QLineEdit):
 #     update_config_signal = pyqtSignal(dict)
 #
-#     def __init__(self, data, parent=None, prop_name: str = None, color: tuple = (255, 255, 255)):
+#     def __init__(self, data, parent=None, prop_name: str = None, color: tuple = DEFAULT_WHITE):
 #         super().__init__(parent)
 #         self.prop_name = prop_name
 #         self.data = data
@@ -53,7 +55,7 @@ class ComboBoxDelegate(QStyledItemDelegate):
 class ComboBoxWidget(QComboBox):
     update_config_signal = pyqtSignal(dict)
 
-    def __init__(self, data, parent=None, prop_name: str = None, color: tuple = (255, 255, 255)):
+    def __init__(self, data, parent=None, prop_name: str = None, color: tuple = DEFAULT_WHITE):
         super().__init__(parent)
         self.prop_name = prop_name
         self.data = data
@@ -72,7 +74,7 @@ class ComboBoxWidget(QComboBox):
 class SpinBoxWidgetInt(QSpinBox):
     update_config_signal = pyqtSignal(dict)
 
-    def __init__(self, data, parent=None, prop_name: str = None, color: tuple = (255, 255, 255)):
+    def __init__(self, data, parent=None, prop_name: str = None, color: tuple = DEFAULT_WHITE):
         super().__init__(parent)
         self.prop_name = prop_name
         self.data = data
@@ -94,7 +96,7 @@ class NNPropertyWidget(QTreeWidget):
         self.setHeaderLabels(['Property', "Value"])
         self.setStyleSheet("padding:0; margin:0;")
         self.moved_widget_id = None
-        self.setStyleSheet("background-color: rgb(255, 255, 191);")
+        self.setStyleSheet(f"background-color: rgb{NN_PROPERTY_BACKGROUND};")
         self.property_items = {}
         self.update()
 
@@ -129,7 +131,7 @@ class NNPropertyWidget(QTreeWidget):
         self.update()
 
     def _create_widget(self, cur_class, key, value, cou):
-        color = (255, 255, 191) if cou % 2 == 0 else (255, 255, 222)
+        color = NN_PROPERTY_BACKGROUND_CHILD_EVEN if cou % 2 == 0 else NN_PROPERTY_BACKGROUND_CHILD_ODD
         widget_type = cur_class(parent=self, data=value, prop_name=key, color=color)
         widget_type.update_config_signal.connect(self.display_updates)
         area_about_widget = self.topLevelItem(0)

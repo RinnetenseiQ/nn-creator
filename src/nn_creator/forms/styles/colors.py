@@ -1,7 +1,10 @@
-# RGB style: (255, 255, 255)
+"""Contains color codes in RGB style.
+Each variable is a tuple.
+Example: DEFAULT_WHITE = (255, 255, 255)"""
 
 DEFAULT_WHITE = (255, 255, 255)
 DEFAULT_BLACK = (0, 0, 0)
+
 NN_PROPERTY_BACKGROUND = (255, 255, 191)
 NN_PROPERTY_BACKGROUND_CHILD_ODD = (255, 255, 222)
 NN_PROPERTY_BACKGROUND_CHILD_EVEN = (255, 255, 191)

@@ -7,6 +7,7 @@ from nn_creator.forms.utils.styles.colors import (DEFAULT_WHITE, NN_PROPERTY_BAC
                                                   NN_PROPERTY_BACKGROUND_CHILD_ODD, NN_PROPERTY_BACKGROUND_CHILD_EVEN)
 from nn_creator.forms.utils.resources import func_activations, immutable_fields
 
+
 class LineEditWidget(QLineEdit):
     update_config_signal = pyqtSignal(dict)
 
@@ -139,6 +140,7 @@ class CheckBoxWidget(QCheckBox):
                                         'value': False if self.data == 0 else True,
                                         'widget_id': self.widget_id})
 
+
 class NNPropertyWidget(QTreeWidget):
     # imm
     def __init__(self, parent=None, event_filter: GlobalEventFilter2 = None):
@@ -164,8 +166,10 @@ class NNPropertyWidget(QTreeWidget):
         self.clear()
         self.addTopLevelItem(QTreeWidgetItem(['Widget', widget.cfg['class_name']]))
         cou = 0
+        temp_immutable_fields = []
         for key, value in widget.cfg['config'].items():
-
+            if key in immutable_fields:
+                temp_immutable_fields.append(key)
             if key not in immutable_fields:
                 if key == 'activation':
                     self._create_subwidget(widget_id=widget_id,
@@ -181,22 +185,23 @@ class NNPropertyWidget(QTreeWidget):
                 elif isinstance(value, str):
                     self._create_subwidget(widget_id, LineEditWidget, key, value, cou)
                 cou += 1
-        #не работает
-        # area_for_widget = self.topLevelItem(0)
-        # area_for_widget.setExpanded(True)
-        # temp = QTreeWidgetItem(area_for_widget)
-        # area_for_widget.addChild(temp)
-        # temp.setText(0, 'Immutable fields')
-        # for key, value in widget.cfg['config'].items():
-        #     if key in immutable_fields:
-        #         color = NN_PROPERTY_BACKGROUND_CHILD_EVEN if cou % 2 == 0 else NN_PROPERTY_BACKGROUND_CHILD_ODD
-        #         area_for_widget.addChild(temp)
-        #         temp.setBackground(0, QColor(*color))
-        #         temp.setBackground(1, QColor(*color))
-        #         temp.setText(0, key)
-        #         temp.setText(1, str(value))
-        #         cou += 1
 
+        if len(temp_immutable_fields) > 0:
+            area_for_widget = self.topLevelItem(0)
+            area_for_widget.setExpanded(True)
+            temp = QTreeWidgetItem(area_for_widget)
+            temp.setBackground(0, QColor(*DEFAULT_WHITE))
+            temp.setBackground(1, QColor(*DEFAULT_WHITE))
+            area_for_widget.addChild(temp)
+            temp.setText(0, "Immutable fields")
+            for key in temp_immutable_fields:
+                color = NN_PROPERTY_BACKGROUND_CHILD_EVEN if cou % 2 == 0 else NN_PROPERTY_BACKGROUND_CHILD_ODD
+                temp = QTreeWidgetItem(area_for_widget)
+                area_for_widget.addChild(temp)
+                temp.setBackground(0, QColor(*color))
+                temp.setText(0, key)
+                temp.setText(1, str(widget.cfg['config'][key]))
+                cou += 1
         self.update()
 
     def _create_subwidget(self, widget_id, cur_class, key, value, cou, items=None):
@@ -227,4 +232,3 @@ class NNPropertyWidget(QTreeWidget):
 
     def _clear_property_area(self, widget_id):
         self.clear()
-
